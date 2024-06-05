@@ -1,7 +1,4 @@
 
-
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:showcase_front/constants/fonts.dart';

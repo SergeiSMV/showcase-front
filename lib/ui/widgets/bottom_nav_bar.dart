@@ -1,16 +1,15 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-import '../constants/fonts.dart';
-import '../data/providers.dart';
+import '../../constants/fonts.dart';
+import '../../constants/string_routers.dart';
+import '../../data/providers.dart';
 
-class MyNavigationBar extends ConsumerWidget {
-  const MyNavigationBar({super.key});
+class BottomNavBar extends ConsumerWidget {
+  const BottomNavBar({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -21,11 +20,11 @@ class MyNavigationBar extends ConsumerWidget {
       selectedIndex: currentIndex,
       backgroundColor: Colors.white,
       textStyle: black(14),
-      tabMargin: const EdgeInsets.symmetric(vertical: 10),
-      activeColor: Colors.black,
-      color: Colors.grey,
+      tabMargin: const EdgeInsets.only(bottom: 10),
+      activeColor: Colors.black87,
+      color: Colors.grey.shade400,
       iconSize: 27,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
       duration: const Duration(milliseconds: 400),
       tabBackgroundColor: Colors.transparent,
       tabs: [
@@ -33,7 +32,7 @@ class MyNavigationBar extends ConsumerWidget {
           icon: MdiIcons.home,
         ),
         GButton(
-          icon: MdiIcons.magnify,
+          icon: MdiIcons.clipboardText,
         ),
         GButton(
           icon: MdiIcons.cart,
@@ -46,16 +45,16 @@ class MyNavigationBar extends ConsumerWidget {
         ref.read(bottomNavIndexProvider.notifier).state = index;
         switch (index) {
           case 0:
-            context.go('/');
+            context.go(home);
             break;
           case 1:
-            context.go('/catalog');
+            context.go(categories);
             break;
           case 2:
-            context.go('/cart');
+            context.go(cart);
             break;
           case 3:
-            context.go('/account');
+            context.go(account);
             break;
         }
       },

@@ -49,3 +49,4 @@ app.*.map.json
 /windows
 pubspec.lock
 README.md
+server_config.dart
