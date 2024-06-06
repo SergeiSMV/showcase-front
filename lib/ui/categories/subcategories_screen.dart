@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import '../../constants/fonts.dart';
-import '../../data/models/category_model/category_data.dart';
 import '../../data/models/category_model/category_model.dart';
 
 class SubCategoriesScreen extends StatelessWidget {
@@ -17,15 +16,15 @@ class SubCategoriesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          opacity: 0.3,
-          image: AssetImage(categoryImagePath[mainCategoryID] ?? categoryImagePath['default_bg']),
-          fit: BoxFit.contain,
-          alignment: Alignment.bottomCenter,
-        ),
-      ),
+    return SizedBox(
+      // decoration: BoxDecoration(
+      //   image: DecorationImage(
+      //     opacity: 0.3,
+      //     image: AssetImage(categoryImagePath[mainCategoryID] ?? categoryImagePath['default_bg']),
+      //     fit: BoxFit.contain,
+      //     alignment: Alignment.bottomCenter,
+      //   ),
+      // ),
       child: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 5),

@@ -9,13 +9,13 @@ class HiveImplements extends HiveRepository{
   final Box hive = Hive.box('mainStorage');
 
   @override
-  Future<void> saveToken(Map authData) async {
-    await hive.put('token', authData);
+  Future<void> saveToken(String token) async {
+    await hive.put('token', token);
   }
 
   @override
   Future<String> getToken() async {
-    String token = await hive.get('authData', defaultValue: '');
+    String token = await hive.get('token', defaultValue: '');
     return token;
   }
   

@@ -1,7 +1,9 @@
+import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:showcase_front/constants/secret_jwt.dart';
 import 'package:showcase_front/data/repositories/hive_implements.dart';
 
 import 'data/providers.dart';
@@ -13,17 +15,20 @@ void main() async {
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await Hive.initFlutter();
   await Hive.openBox('mainStorage');
-  final container = ProviderContainer();
-  String token = await HiveImplements().getToken();
-  token.isEmpty ? null : container.read(isAutgorizedProvider.notifier).state = true;
-  runApp(const ProviderScope(child: App()));
+  runApp(const ProviderScope(child: App())
+  );
 }
 
-class App extends StatelessWidget {
+
+
+class App extends ConsumerWidget {
   const App({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+
+    isAutgorized(ref);
+
     return MaterialApp.router(
       scaffoldMessengerKey: GlobalScaffoldMessenger.scaffoldMessengerKey,
       routeInformationParser: router.routeInformationParser,
@@ -40,5 +45,18 @@ class App extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<void> isAutgorized(WidgetRef ref) async {
+  String token = await HiveImplements().getToken();
+  if (token.isNotEmpty) {
+    final jwt = JWT.verify(token, SecretKey(secretJWT));
+    final payload = jwt.payload;
+    ref.read(isAutgorizedProvider.notifier).state = true;
+    ref.read(clientIDProvider.notifier).state = payload['client_id'];
+    
+    return ref.refresh(baseCartsProvider(payload['client_id']));
+  }
+  // HiveImplements()
 }
 

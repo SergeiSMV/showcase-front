@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:badges/badges.dart' as badges;
 
 import '../../constants/fonts.dart';
-import '../../constants/string_routers.dart';
 import '../../data/providers.dart';
 
 class BottomNavBar extends ConsumerWidget {
@@ -34,8 +34,20 @@ class BottomNavBar extends ConsumerWidget {
         GButton(
           icon: MdiIcons.clipboardText,
         ),
+        // GButton(
+        //   icon: MdiIcons.cart,
+        // ),
         GButton(
           icon: MdiIcons.cart,
+          leading: badges.Badge(
+            badgeContent: Consumer(
+              builder: (context, ref, child) {
+                int count = ref.watch(cartBadgesProvider);
+                return Text(count.toString(), style: const TextStyle(color: Colors.white));
+              }
+            ),
+            child: Icon(MdiIcons.cart),
+          ),
         ),
         GButton(
           icon: MdiIcons.account,
@@ -45,19 +57,20 @@ class BottomNavBar extends ConsumerWidget {
         ref.read(bottomNavIndexProvider.notifier).state = index;
         switch (index) {
           case 0:
-            context.go(home);
+            GoRouter.of(context).pushReplacement('/');
             break;
           case 1:
-            context.go(categories);
+            GoRouter.of(context).pushReplacement('/categories');
             break;
           case 2:
-            context.go(cart);
+            GoRouter.of(context).pushReplacement('/cart');
             break;
           case 3:
-            context.go(account);
+            GoRouter.of(context).pushReplacement('/account');
             break;
         }
       },
     );
   }
+
 }

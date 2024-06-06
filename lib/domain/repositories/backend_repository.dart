@@ -12,4 +12,10 @@ abstract class BackendRepository{
 
   Future<Image> backendPicture(String picURL);
 
+  Future<String> authorization(String login, String pass);
+
+  Future<List> backendGetCart(int clientID);
+
+  Future backendPutCart(Map putData);
+
 }

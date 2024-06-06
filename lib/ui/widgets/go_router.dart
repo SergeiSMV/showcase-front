@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../constants/string_routers.dart';
 import '../account/account_screen.dart';
+import '../auth/auth.dart';
 import '../cart/cart_screen.dart';
 import '../categories/subcategories_screen.dart';
 import '../categories/categories_screen.dart';
@@ -12,7 +12,7 @@ import '../home/home_screen.dart';
 import 'bottom_nav_bar.dart';
 
 final GoRouter router = GoRouter(
-  initialLocation: home,
+  initialLocation: '/',
   routes: <RouteBase>[
     ShellRoute(
       builder: (context, state, child) => Scaffold(
@@ -21,12 +21,17 @@ final GoRouter router = GoRouter(
       ),
       routes: [
         GoRoute(
-          path: home,
+          path: '/',
           builder: (context, state) => const HomeScreen(),
           pageBuilder: (context, state) => const NoTransitionPage<void>(child: HomeScreen()),
         ),
         GoRoute(
-          path: categories,
+          path: '/auth',
+          builder: (context, state) => const Auth(),
+          pageBuilder: (context, state) => const NoTransitionPage<void>(child: Auth()),
+        ),
+        GoRoute(
+          path: '/categories',
           builder: (context, state) => const CategoriesScreen(),
           pageBuilder: (context, state) => const NoTransitionPage<void>(child: CategoriesScreen()),
         ),
@@ -51,12 +56,12 @@ final GoRouter router = GoRouter(
           },
         ),
         GoRoute(
-          path: cart,
+          path: '/cart',
           builder: (context, state) => const CartScreen(),
           pageBuilder: (context, state) => const NoTransitionPage<void>(child: CartScreen()),
         ),
         GoRoute(
-          path: account,
+          path: '/account',
           builder: (context, state) => const AccountScreen(),
           pageBuilder: (context, state) => const NoTransitionPage<void>(child: AccountScreen()),
         ),

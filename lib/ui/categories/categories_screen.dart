@@ -33,18 +33,22 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             const SizedBox(height: 20,),
-            Align(
-              alignment: Alignment.centerLeft, 
-              child: Padding(
-                padding: const EdgeInsets.only(left: 7),
-                child: Text('Категории продуктов', style: black(30, FontWeight.bold),),
-              )
-            ),
+            header(),
             const SizedBox(height: 10,),
             categoryViews(),
           ],
         ),
       ),
+    );
+  }
+
+  Align header() {
+    return Align(
+      alignment: Alignment.centerLeft, 
+      child: Padding(
+        padding: const EdgeInsets.only(left: 7),
+        child: Text('Категории товаров', style: black(30, FontWeight.bold), overflow: TextOverflow.clip,),
+      )
     );
   }
 

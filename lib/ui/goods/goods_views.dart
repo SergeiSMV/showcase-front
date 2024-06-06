@@ -1,12 +1,16 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../../constants/fonts.dart';
 import '../../data/models/category_model/category_data.dart';
 import '../../data/models/goods_model/goods_model.dart';
+import '../../data/providers.dart';
 import '../../data/repositories/backend_implements.dart';
+import '../categories/indicate_quantity.dart';
+import '../widgets/scaffold_messenger.dart';
 
 class GoodsViews extends ConsumerStatefulWidget {
   final GoodsModel currentGoods;
@@ -17,7 +21,10 @@ class GoodsViews extends ConsumerStatefulWidget {
 }
 
 class _GoodsViewsState extends ConsumerState<GoodsViews> {
+
+  final TextEditingController _quantityController = TextEditingController();
   final PageController _controller = PageController();
+
   List pictures = [
     {'product_id': 45, 'picture_url': '/get-picture/by_id/45-1', 'picture_position': 1},
     {'product_id': 43, 'picture_url': '/get-picture/by_id/43-1', 'picture_position': 1},
@@ -33,6 +40,29 @@ class _GoodsViewsState extends ConsumerState<GoodsViews> {
   void dispose(){
     _controller.dispose();
     super.dispose();
+  }
+
+
+  bool currentGoodsInCart(List cart){
+    bool inCart = false;
+    for (var product in cart) {
+      if (product['product_id'] == widget.currentGoods.id) {
+        inCart = true;
+        break;
+      }
+    }
+    return inCart;
+  }
+
+  Map currentGoodsCartData(List cart){
+    Map data = {};
+    for (var product in cart) {
+      if (product['product_id'] == widget.currentGoods.id) {
+        data = product;
+        break;
+      }
+    }
+    return data;
   }
 
 
@@ -60,38 +90,138 @@ class _GoodsViewsState extends ConsumerState<GoodsViews> {
               ),
             ],
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              goodsImages(),
-              // widget.currentGoods.pictures.isEmpty ? const SizedBox.shrink() : 
-              const SizedBox(height: 5,),
-              widget.currentGoods.pictures.isEmpty ? const SizedBox(height: 8,) : imageIndicator(),
-              const SizedBox(height: 5,),
-              Expanded(child: Text(widget.currentGoods.name, style: darkGoods(16, FontWeight.w500), maxLines: 3, overflow: TextOverflow.fade,)),
-              const SizedBox(height: 10,),
-              Align(alignment: Alignment.centerLeft, child: getPrice(widget.currentGoods.basePrice, widget.currentGoods.clientPrice,)),
-              const SizedBox(height: 10,),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF00B737),
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+          child: Builder(
+            builder: (context) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  goodsImages(),
+                  // widget.currentGoods.pictures.isEmpty ? const SizedBox.shrink() : 
+                  const SizedBox(height: 5,),
+                  widget.currentGoods.pictures.isEmpty ? const SizedBox(height: 8,) : imageIndicator(),
+                  const SizedBox(height: 5,),
+                  Expanded(child: Text(widget.currentGoods.name, style: darkGoods(16, FontWeight.w500), maxLines: 3, overflow: TextOverflow.fade,)),
+                  const SizedBox(height: 10,),
+                  Align(alignment: Alignment.centerLeft, child: getPrice(widget.currentGoods.basePrice, widget.currentGoods.clientPrice,)),
+                  const SizedBox(height: 10,),
+                  Consumer(
+                    builder: (context, ref, child) {
+                      final cart = ref.watch(cartProvider);
+                      
+                      return SizedBox(
+                        width: double.infinity,
+                        child: currentGoodsInCart(cart) ? 
+                        Row(
+                          children: [
+                            quantityControlButton('minus', cart),
+                            Expanded(
+                              child: InkWell(
+                                onTap: () => indicateQuantity(context, _quantityController, widget.currentGoods.name).then((_){
+                                  putExact(cart);
+                                }),
+                                child: Center(
+                                  child: Text('${currentGoodsCartData(cart)['quantity']}', style: darkGoods(20, FontWeight.w500),)
+                                ),
+                              )
+                            ),
+                            quantityControlButton('plus')
+                          ],
+                        )
+                        : toCartButton(),
+                      );
+                    }
                   ),
-                  onPressed: () async { 
-                
-                  }, 
-                  child: Text('в корзину', style: white(16),)
-                ),
-              ),
-            ],
+                ],
+              );
+            }
           ),
         ),
       ),
+    );
+  }
+
+  SizedBox quantityControlButton(String operation, [List<dynamic> cart = const []]) {
+    return SizedBox(
+      width: 40,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(horizontal: 3.0, vertical: 3.0),
+          backgroundColor: Colors.amber,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: operation == 'plus' ? const BorderRadius.only(topRight: Radius.circular(10), bottomRight: Radius.circular(10)) :
+              const BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10)),
+          ),
+        ),
+        onPressed: () async { 
+          operation == 'plus' ? await putIncrement() : putDecrement(cart);
+        }, 
+        child: Center(
+          child: operation == 'plus' ? Icon(MdiIcons.plus, color: Colors.black, size: 20,) : 
+            Icon(MdiIcons.minus, color: Colors.black, size: 20,)
+        )
+      ),
+    );
+  }
+
+  Future<void> putExact(List<dynamic> cart) async {
+    int clientID = ref.read(clientIDProvider);
+    int? quantityExact = int.parse(_quantityController.text);
+    int? quantityIncr;
+    Map putData = {
+      "client_id": clientID,
+      "product_id": widget.currentGoods.id,
+      "quantity_incr": quantityIncr,
+      "quantity_exact": quantityExact
+    };
+    await BackendImplements().backendPutCart(putData).then((value) => ref.refresh(baseCartsProvider(clientID)));
+    
+  }
+
+  Future<void> putDecrement(List<dynamic> cart) async {
+    int clientID = ref.read(clientIDProvider);
+    int? quantityExact;
+    var quantityIncr = currentGoodsCartData(cart)['quantity'] == 1 ? quantityExact = 0 : -1;
+    Map putData = {
+      "client_id": clientID,
+      "product_id": widget.currentGoods.id,
+      "quantity_incr": quantityIncr,
+      "quantity_exact": quantityExact
+    };
+    await BackendImplements().backendPutCart(putData).then((value) => ref.refresh(baseCartsProvider(clientID)));
+  }
+
+  Future<void> putIncrement() async {
+    int clientID = ref.read(clientIDProvider);
+    Map putData = {
+      "client_id": clientID,
+      "product_id": widget.currentGoods.id,
+      "quantity_incr": 1,
+      "quantity_exact": null
+    };
+    await BackendImplements().backendPutCart(putData).then((value) => ref.refresh(baseCartsProvider(clientID)));
+  }
+
+  Widget toCartButton() {
+    return Consumer(
+      builder: (context, ref, child) {
+        bool isAutgorized = ref.watch(isAutgorizedProvider);
+        return ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF00B737),
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+          onPressed: () async {
+            isAutgorized ? 
+              await putIncrement() 
+            : GlobalScaffoldMessenger.instance.showSnackBar('Вы не авторизованы!', 'error');
+          }, 
+          child: Text('в корзину', style: white(16),)
+        );
+      }
     );
   }
 
@@ -143,19 +273,20 @@ class _GoodsViewsState extends ConsumerState<GoodsViews> {
   }
 
   Widget getPrice(double basePrice, double clientPrice){
-    if (basePrice == clientPrice){
+    if (basePrice > clientPrice){
       return Row(
         children: [
-          Text('$basePrice', style: darkGoods(24, FontWeight.normal), overflow: TextOverflow.fade,),
+          Text('$clientPrice', style: darkGoods(24, FontWeight.normal), overflow: TextOverflow.fade,),
           Text('₽', style: grey(20, FontWeight.normal), overflow: TextOverflow.fade,),
+          const SizedBox(width: 10,),
+          Text('$basePrice', style: throughPrice(20, FontWeight.normal)),
         ],
       );
     } else {
       return Row(
         children: [
-          Text('$clientPrice₽', style: darkGoods(24, FontWeight.normal)),
-          const SizedBox(width: 10,),
-          Text('$basePrice', style: throughPrice(18, FontWeight.normal)),
+          Text('$clientPrice', style: darkGoods(24, FontWeight.normal)),
+          Text('₽', style: grey(20, FontWeight.normal), overflow: TextOverflow.fade,),
         ],
       );
     }

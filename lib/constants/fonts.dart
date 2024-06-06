@@ -20,5 +20,5 @@ TextStyle throughPrice(double size, [FontWeight weight = FontWeight.normal]) => 
   height: 1,
   decoration: TextDecoration.lineThrough,
   decorationColor: Colors.red,
-  decorationThickness: 2.0,
+  decorationThickness: 3.0,
 );

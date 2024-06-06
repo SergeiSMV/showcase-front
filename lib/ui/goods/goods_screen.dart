@@ -53,25 +53,34 @@ class _GoodsScreenState extends ConsumerState<GoodsScreen> {
         return isAutgorized ? const SizedBox.shrink() :
         Padding(
           padding: const EdgeInsets.only(top: 5),
-          child: Container(
-            padding: const EdgeInsets.only(left: 10),
-            height: 60,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(3),
-              border: Border.all(
-                width: 3,
-                color: Colors.transparent,
+          child: InkWell(
+            onTap: (){
+              GoRouter.of(context).push('/auth').then((clientID) {
+                  return {ref.refresh(baseProductsProvider(widget.categoryID)),
+                    ref.refresh(baseCartsProvider(clientID as int))};
+                }
+              );
+            },
+            child: Container(
+              padding: const EdgeInsets.only(left: 10),
+              height: 60,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(3),
+                border: Border.all(
+                  width: 3,
+                  color: Colors.transparent,
+                ),
+                color: Colors.red,
               ),
-              color: Colors.red,
-            ),
-            child: Align(
-              alignment: Alignment.center, 
-              child: Text(
-                'Необходимо авторизоваться,\nдля получения персональных цен и возможности добавления товаров в корзину', 
-                style: whiteBanner(16), 
-                textAlign: TextAlign.left,
-              )
+              child: Align(
+                alignment: Alignment.center, 
+                child: Text(
+                  'Необходимо авторизоваться,\nдля получения персональных цен и возможности добавления товаров в корзину', 
+                  style: whiteBanner(16), 
+                  textAlign: TextAlign.left,
+                )
+              ),
             ),
           ),
         );
