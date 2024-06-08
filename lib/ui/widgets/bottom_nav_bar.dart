@@ -34,19 +34,22 @@ class BottomNavBar extends ConsumerWidget {
         GButton(
           icon: MdiIcons.clipboardText,
         ),
-        // GButton(
-        //   icon: MdiIcons.cart,
-        // ),
         GButton(
           icon: MdiIcons.cart,
-          leading: badges.Badge(
-            badgeContent: Consumer(
-              builder: (context, ref, child) {
-                int count = ref.watch(cartBadgesProvider);
-                return Text(count.toString(), style: const TextStyle(color: Colors.white));
-              }
-            ),
-            child: Icon(MdiIcons.cart),
+          leading: Consumer(
+            builder: (context, ref, child) {
+              int count = ref.watch(cartBadgesProvider);
+              int currenIndex = ref.watch(bottomNavIndexProvider);
+              return badges.Badge(
+                badgeAnimation: const badges.BadgeAnimation.scale(),
+                showBadge: count == 0 ? false : true,
+                badgeContent: Text(count.toString(), style: const TextStyle(color: Colors.white)),
+                child: Icon(
+                  MdiIcons.cart,
+                  color: currenIndex == 2 ? Colors.black87 : Colors.grey.shade400,
+                ),
+              );
+            }
           ),
         ),
         GButton(

@@ -38,6 +38,7 @@ class _GoodsViewsState extends ConsumerState<GoodsViews> {
 
   @override
   void dispose(){
+    _quantityController.dispose();
     _controller.dispose();
     super.dispose();
   }

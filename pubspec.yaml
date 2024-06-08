@@ -51,6 +51,7 @@ dependencies:
   smooth_page_indicator: ^1.1.0
   dart_jsonwebtoken: ^2.14.0
   badges: ^3.1.2
+  flutter_hooks: ^0.20.5
 
 dev_dependencies:
   flutter_test:
@@ -81,6 +82,7 @@ flutter:
   assets:
     - lib/images/
     - lib/images/categories/
+    - lib/images/lottie/
     - lib/images/lottie/truck_loading.lottie
   # assets:
   #   - images/a_dot_burr.jpeg

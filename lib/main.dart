@@ -57,6 +57,5 @@ Future<void> isAutgorized(WidgetRef ref) async {
     
     return ref.refresh(baseCartsProvider(payload['client_id']));
   }
-  // HiveImplements()
 }
 

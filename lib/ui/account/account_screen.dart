@@ -6,6 +6,7 @@ import 'package:showcase_front/constants/fonts.dart';
 import 'package:showcase_front/data/repositories/hive_implements.dart';
 
 import '../../data/providers.dart';
+import '../auth/auth.dart';
 
 
 
@@ -21,33 +22,44 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    final int clientID = ref.watch(clientIDProvider);
+
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.only(bottom: 30),
-        child: Align(
-          alignment: Alignment.bottomCenter,
-          child: SizedBox(
-            width: 300,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF00B737),
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+      body: SafeArea(
+        child: 
+        clientID == 0 ?
+
+        const Auth() :
+        
+        Padding(
+          padding: const EdgeInsets.only(bottom: 30),
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: SizedBox(
+              width: 300,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF00B737),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
+                onPressed: () async { 
+                  await HiveImplements().saveToken('').then((_) {
+                    ref.invalidate(baseProductsProvider);
+                    ref.invalidate(baseCartsProvider);
+                    ref.read(isAutgorizedProvider.notifier).state = false;
+                    ref.read(clientIDProvider.notifier).state = 0;
+                    // ref.read(bottomNavIndexProvider.notifier).state = 0;
+                    ref.read(cartBadgesProvider.notifier).state = 0;
+                    // GoRouter.of(context).pushReplacement('/');
+                  });
+                }, 
+                child: Text('выйти', style: white(16),)
               ),
-              onPressed: () async { 
-                await HiveImplements().saveToken('').then((_) {
-                  ref.invalidate(baseProductsProvider);
-                  ref.invalidate(baseCartsProvider);
-                  ref.read(isAutgorizedProvider.notifier).state = false;
-                  ref.read(clientIDProvider.notifier).state = 0;
-                  ref.read(bottomNavIndexProvider.notifier).state = 0;
-                  GoRouter.of(context).pushReplacement('/');
-                });
-              }, 
-              child: Text('выйти', style: white(16),)
             ),
           ),
         ),

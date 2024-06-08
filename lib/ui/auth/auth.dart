@@ -31,9 +31,7 @@ class _AuthState extends ConsumerState<Auth> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: ProgressHUD(
+    return ProgressHUD(
         barrierColor: Colors.white.withOpacity(0.7),
         padding: const EdgeInsets.all(20.0),
         child: Builder(
@@ -139,7 +137,6 @@ class _AuthState extends ConsumerState<Auth> {
             );
           }
         ),
-      ),
-    );
+      );
   }
 }
