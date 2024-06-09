@@ -6,30 +6,26 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../../constants/fonts.dart';
 import '../../data/models/category_model/category_data.dart';
-import '../../data/models/goods_model/goods_model.dart';
+import '../../data/models/product_model/product_model.dart';
 import '../../data/providers.dart';
 import '../../data/repositories/backend_implements.dart';
 import '../categories/indicate_quantity.dart';
 import '../widgets/scaffold_messenger.dart';
+import 'product_card.dart';
 
-class GoodsViews extends ConsumerStatefulWidget {
-  final GoodsModel currentGoods;
-  const GoodsViews({super.key, required this.currentGoods});
+class ProductsViews extends ConsumerStatefulWidget {
+  final ProductModel currentProduct;
+  const ProductsViews({super.key, required this.currentProduct});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _GoodsViewsState();
 }
 
-class _GoodsViewsState extends ConsumerState<GoodsViews> {
+class _GoodsViewsState extends ConsumerState<ProductsViews> {
 
   final TextEditingController _quantityController = TextEditingController();
-  final PageController _controller = PageController();
-
-  List pictures = [
-    {'product_id': 45, 'picture_url': '/get-picture/by_id/45-1', 'picture_position': 1},
-    {'product_id': 43, 'picture_url': '/get-picture/by_id/43-1', 'picture_position': 1},
-    {'product_id': 50, 'picture_url': '/get-picture/by_id/50-1', 'picture_position': 1}
-  ];
+  final PageController pageController = PageController();
+  final BackendImplements backend = BackendImplements();
 
   @override
   void initState(){
@@ -39,7 +35,7 @@ class _GoodsViewsState extends ConsumerState<GoodsViews> {
   @override
   void dispose(){
     _quantityController.dispose();
-    _controller.dispose();
+    pageController.dispose();
     super.dispose();
   }
 
@@ -47,7 +43,7 @@ class _GoodsViewsState extends ConsumerState<GoodsViews> {
   bool currentGoodsInCart(List cart){
     bool inCart = false;
     for (var product in cart) {
-      if (product['product_id'] == widget.currentGoods.id) {
+      if (product['product_id'] == widget.currentProduct.id) {
         inCart = true;
         break;
       }
@@ -58,7 +54,7 @@ class _GoodsViewsState extends ConsumerState<GoodsViews> {
   Map currentGoodsCartData(List cart){
     Map data = {};
     for (var product in cart) {
-      if (product['product_id'] == widget.currentGoods.id) {
+      if (product['product_id'] == widget.currentProduct.id) {
         data = product;
         break;
       }
@@ -72,7 +68,7 @@ class _GoodsViewsState extends ConsumerState<GoodsViews> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 5),
       child: InkWell(
-        onTap: (){ },
+        onTap: () => showProductCard(context),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 0),
           decoration: BoxDecoration(
@@ -93,42 +89,48 @@ class _GoodsViewsState extends ConsumerState<GoodsViews> {
           ),
           child: Builder(
             builder: (context) {
+
+              final int clientID = ref.watch(clientIDProvider);
+
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  goodsImages(),
-                  // widget.currentGoods.pictures.isEmpty ? const SizedBox.shrink() : 
+                  productImages(),
                   const SizedBox(height: 5,),
-                  widget.currentGoods.pictures.isEmpty ? const SizedBox(height: 8,) : imageIndicator(),
+                  widget.currentProduct.pictures.isEmpty || widget.currentProduct.pictures.length == 1 ? const SizedBox(height: 8,) : imageIndicator(),
                   const SizedBox(height: 5,),
-                  Expanded(child: Text(widget.currentGoods.name, style: darkGoods(16, FontWeight.w500), maxLines: 3, overflow: TextOverflow.fade,)),
+                  Expanded(child: Text(widget.currentProduct.name, style: darkProduct(16, FontWeight.w500), maxLines: 3, overflow: TextOverflow.fade,)),
                   const SizedBox(height: 10,),
-                  Align(alignment: Alignment.centerLeft, child: getPrice(widget.currentGoods.basePrice, widget.currentGoods.clientPrice,)),
+                  Align(alignment: Alignment.centerLeft, child: getPrice(widget.currentProduct.basePrice, widget.currentProduct.clientPrice,)),
                   const SizedBox(height: 10,),
                   Consumer(
                     builder: (context, ref, child) {
+
                       final cart = ref.watch(cartProvider);
-                      
+
                       return SizedBox(
                         width: double.infinity,
-                        child: currentGoodsInCart(cart) ? 
+                        child: 
+                        currentGoodsInCart(cart) ? 
                         Row(
                           children: [
-                            quantityControlButton('minus', cart),
+                            quantityControlButton('minus', clientID, cart),
                             Expanded(
                               child: InkWell(
-                                onTap: () => indicateQuantity(context, _quantityController, widget.currentGoods.name).then((_){
-                                  putExact(cart);
+                                onTap: () => indicateQuantity(context, _quantityController, widget.currentProduct.name).then((_) async {
+                                  await backend.putExact(clientID, widget.currentProduct.id, int.parse(_quantityController.text)).then(
+                                    (_) => ref.refresh(baseCartsProvider(clientID))
+                                  );
                                 }),
                                 child: Center(
-                                  child: Text('${currentGoodsCartData(cart)['quantity']}', style: darkGoods(20, FontWeight.w500),)
+                                  child: Text('${currentGoodsCartData(cart)['quantity']}', style: darkProduct(20, FontWeight.w500),)
                                 ),
                               )
                             ),
-                            quantityControlButton('plus')
+                            quantityControlButton('plus', clientID)
                           ],
                         )
-                        : toCartButton(),
+                        : toCartButton(clientID),
                       );
                     }
                   ),
@@ -141,7 +143,7 @@ class _GoodsViewsState extends ConsumerState<GoodsViews> {
     );
   }
 
-  SizedBox quantityControlButton(String operation, [List<dynamic> cart = const []]) {
+  SizedBox quantityControlButton(String operation, int clientID, [List<dynamic> cart = const []]) {
     return SizedBox(
       width: 40,
       child: ElevatedButton(
@@ -155,7 +157,14 @@ class _GoodsViewsState extends ConsumerState<GoodsViews> {
           ),
         ),
         onPressed: () async { 
-          operation == 'plus' ? await putIncrement() : putDecrement(cart);
+          operation == 'plus' ? 
+          await backend.putIncrement(clientID, widget.currentProduct.id).then(
+            (_) => ref.refresh(baseCartsProvider(clientID))
+          )
+          : 
+          await backend.putDecrement(clientID, widget.currentProduct.id, currentGoodsCartData(cart)['quantity']).then(
+            (_) => ref.refresh(baseCartsProvider(clientID))
+          );
         }, 
         child: Center(
           child: operation == 'plus' ? Icon(MdiIcons.plus, color: Colors.black, size: 20,) : 
@@ -165,45 +174,7 @@ class _GoodsViewsState extends ConsumerState<GoodsViews> {
     );
   }
 
-  Future<void> putExact(List<dynamic> cart) async {
-    int clientID = ref.read(clientIDProvider);
-    int? quantityExact = int.parse(_quantityController.text);
-    int? quantityIncr;
-    Map putData = {
-      "client_id": clientID,
-      "product_id": widget.currentGoods.id,
-      "quantity_incr": quantityIncr,
-      "quantity_exact": quantityExact
-    };
-    await BackendImplements().backendPutCart(putData).then((value) => ref.refresh(baseCartsProvider(clientID)));
-    
-  }
-
-  Future<void> putDecrement(List<dynamic> cart) async {
-    int clientID = ref.read(clientIDProvider);
-    int? quantityExact;
-    var quantityIncr = currentGoodsCartData(cart)['quantity'] == 1 ? quantityExact = 0 : -1;
-    Map putData = {
-      "client_id": clientID,
-      "product_id": widget.currentGoods.id,
-      "quantity_incr": quantityIncr,
-      "quantity_exact": quantityExact
-    };
-    await BackendImplements().backendPutCart(putData).then((value) => ref.refresh(baseCartsProvider(clientID)));
-  }
-
-  Future<void> putIncrement() async {
-    int clientID = ref.read(clientIDProvider);
-    Map putData = {
-      "client_id": clientID,
-      "product_id": widget.currentGoods.id,
-      "quantity_incr": 1,
-      "quantity_exact": null
-    };
-    await BackendImplements().backendPutCart(putData).then((value) => ref.refresh(baseCartsProvider(clientID)));
-  }
-
-  Widget toCartButton() {
+  Widget toCartButton(int clientID) {
     return Consumer(
       builder: (context, ref, child) {
         bool isAutgorized = ref.watch(isAutgorizedProvider);
@@ -217,7 +188,9 @@ class _GoodsViewsState extends ConsumerState<GoodsViews> {
           ),
           onPressed: () async {
             isAutgorized ? 
-              await putIncrement() 
+            await backend.putIncrement(clientID, widget.currentProduct.id).then(
+              (_) => ref.refresh(baseCartsProvider(clientID))
+            )
             : GlobalScaffoldMessenger.instance.showSnackBar('Вы не авторизованы!', 'error');
           }, 
           child: Text('в корзину', style: white(16),)
@@ -226,7 +199,7 @@ class _GoodsViewsState extends ConsumerState<GoodsViews> {
     );
   }
 
-  Container goodsImages() {
+  Container productImages() {
     return Container(
       width: double.infinity,
       height: 150,
@@ -234,14 +207,12 @@ class _GoodsViewsState extends ConsumerState<GoodsViews> {
         borderRadius: BorderRadius.circular(10),
         color: Colors.white,
       ),
-      child: widget.currentGoods.pictures.isEmpty ? Image.asset(categoryImagePath['empty'], scale: 3,) : 
+      child: widget.currentProduct.pictures.isEmpty ? Image.asset(categoryImagePath['empty'], scale: 3,) : 
       PageView.builder(
-        controller: _controller,
-        // itemCount: widget.currentGoods.pictures.length,
-        itemCount: pictures.length,
+        controller: pageController,
+        itemCount: widget.currentProduct.pictures.length,
         itemBuilder: (context, index) {
-          // String picURL = widget.currentGoods.pictures[index]['picture_url'];
-          String picURL = pictures[index]['picture_url'];
+          String picURL = widget.currentProduct.pictures[index]['picture_url'];
           return FutureBuilder<Image>(
             future: BackendImplements().backendPicture(picURL),
             builder: (context, snapshot) {
@@ -261,8 +232,8 @@ class _GoodsViewsState extends ConsumerState<GoodsViews> {
 
   SmoothPageIndicator imageIndicator() {
     return SmoothPageIndicator(
-      controller: _controller,
-      count: pictures.length,
+      controller: pageController,
+      count: widget.currentProduct.pictures.length,
       effect: WormEffect(
         dotHeight: 8,
         dotWidth: 8,
@@ -277,20 +248,34 @@ class _GoodsViewsState extends ConsumerState<GoodsViews> {
     if (basePrice > clientPrice){
       return Row(
         children: [
-          Text('$clientPrice', style: darkGoods(24, FontWeight.normal), overflow: TextOverflow.fade,),
+          Text('$clientPrice', style: darkProduct(24, FontWeight.normal), overflow: TextOverflow.fade,),
           Text('₽', style: grey(20, FontWeight.normal), overflow: TextOverflow.fade,),
           const SizedBox(width: 10,),
-          Text('$basePrice', style: throughPrice(20, FontWeight.normal)),
+          Text('$basePrice', style: blackThroughPrice(20, FontWeight.normal)),
         ],
       );
     } else {
       return Row(
         children: [
-          Text('$clientPrice', style: darkGoods(24, FontWeight.normal)),
+          Text('$clientPrice', style: darkProduct(24, FontWeight.normal)),
           Text('₽', style: grey(20, FontWeight.normal), overflow: TextOverflow.fade,),
         ],
       );
     }
+  }
+
+
+  void showProductCard(BuildContext mainContext) {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      context: mainContext,
+      builder: (context) {
+        return ProductCard(
+          product: widget.currentProduct,
+        );
+      },
+    );
   }
 
 

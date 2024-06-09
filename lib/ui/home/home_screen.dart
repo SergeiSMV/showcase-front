@@ -4,6 +4,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:showcase_front/constants/fonts.dart';
 import 'package:showcase_front/constants/server_config.dart';
+import 'package:showcase_front/data/repositories/hive_implements.dart';
+
+import '../../data/providers.dart';
+import '../widgets/scaffold_messenger.dart';
+import 'change_server.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -13,6 +18,9 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+
+  TextEditingController controller = TextEditingController(text: 'http://');
+  HiveImplements hive = HiveImplements();
 
   @override
   void initState(){
@@ -24,11 +32,62 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   @override
+  void dispose(){
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
-        child: Text('сервер: $apiURL', style: black(18),),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Consumer(
+              builder: (context, ref, child) {
+                String server = ref.watch(serverURLProvider);
+                return Text('сервер: $server', style: black(18),);
+              }
+            ),
+            const SizedBox(height: 20,),
+            SizedBox(
+              width: 250,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF00B737),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                onPressed: () => changeServer(context, controller).then((_) async {
+                  print(controller.text);
+                  await hive.saveServerURL(controller.text).then((value) => ref.read(serverURLProvider.notifier).state = controller.text.toString());
+                }), 
+                child: Text('изменить сервер', style: white(16),)
+              ),
+            ),
+            const SizedBox(height: 10,),
+            SizedBox(
+              width: 250,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.amber,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                onPressed: () async {
+                  await hive.saveServerURL(apiURL).then((_) => ref.read(serverURLProvider.notifier).state = apiURL.toString());
+                }, 
+                child: Text('по умолчанию', style: black(16),)
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

@@ -71,7 +71,7 @@ class SubCategoriesScreen extends StatelessWidget {
             onTap: (){ 
               category.children.isEmpty ?
               GoRouter.of(context).push(
-                '/goods',
+                '/products',
                 extra: {
                   'mainCategory': category.name,
                   'categoryID': category.id
@@ -139,7 +139,7 @@ class SubCategoriesScreen extends StatelessWidget {
     return InkWell(
       onTap: (){
         GoRouter.of(context).push(
-          '/goods',
+          '/products',
           extra: {
             'mainCategory': mainCategory,
             'categoryID': mainCategoryID

@@ -21,6 +21,7 @@ class Auth extends ConsumerStatefulWidget {
 class _AuthState extends ConsumerState<Auth> {
   final TextEditingController _loginController = TextEditingController();
   final TextEditingController _passController = TextEditingController();
+  final BackendImplements backend = BackendImplements();
 
   @override
   void dispose(){
@@ -118,7 +119,7 @@ class _AuthState extends ConsumerState<Auth> {
                         FocusScope.of(context).unfocus();
                         final progress = ProgressHUD.of(context);
                         progress?.showWithText('авторизуемся');
-                        await BackendImplements().authorization(_loginController.text, _passController.text).then((token) async {
+                        await backend.authorization(_loginController.text, _passController.text).then((token) async {
                           await HiveImplements().saveToken(token).then((_) {
                             final jwt = JWT.verify(token, SecretKey(secretJWT));
                             final payload = jwt.payload;

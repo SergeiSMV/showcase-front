@@ -6,6 +6,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:showcase_front/constants/secret_jwt.dart';
 import 'package:showcase_front/data/repositories/hive_implements.dart';
 
+import 'constants/server_config.dart';
 import 'data/providers.dart';
 import 'ui/widgets/go_router.dart';
 import 'ui/widgets/scaffold_messenger.dart';
@@ -48,14 +49,17 @@ class App extends ConsumerWidget {
 }
 
 Future<void> isAutgorized(WidgetRef ref) async {
-  String token = await HiveImplements().getToken();
+  HiveImplements hive = HiveImplements();
+  String token = await hive.getToken();
+  String server = await hive.getServerURL();
+  ref.read(serverURLProvider.notifier).state = server.isEmpty ? apiURL : server;
   if (token.isNotEmpty) {
     final jwt = JWT.verify(token, SecretKey(secretJWT));
     final payload = jwt.payload;
     ref.read(isAutgorizedProvider.notifier).state = true;
     ref.read(clientIDProvider.notifier).state = payload['client_id'];
-    
     return ref.refresh(baseCartsProvider(payload['client_id']));
   }
+  
 }
 

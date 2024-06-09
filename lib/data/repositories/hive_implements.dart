@@ -18,5 +18,16 @@ class HiveImplements extends HiveRepository{
     String token = await hive.get('token', defaultValue: '');
     return token;
   }
+
+  @override
+  Future<void> saveServerURL(String url) async {
+    await hive.put('server', url);
+  }
+
+  @override
+  Future<String> getServerURL() async {
+    String server = await hive.get('server', defaultValue: '');
+    return server;
+  }
   
 }

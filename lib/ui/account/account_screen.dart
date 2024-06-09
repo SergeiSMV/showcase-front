@@ -6,7 +6,6 @@ import 'package:showcase_front/constants/fonts.dart';
 import 'package:showcase_front/data/repositories/hive_implements.dart';
 
 import '../../data/providers.dart';
-import '../auth/auth.dart';
 
 
 
@@ -31,7 +30,28 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
         child: 
         clientID == 0 ?
 
-        const Auth() :
+        Padding(
+          padding: const EdgeInsets.only(bottom: 30),
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: SizedBox(
+              width: 300,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF00B737),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                onPressed: () { 
+                  GoRouter.of(context).push('/auth');
+                }, 
+                child: Text('авторизоваться', style: white(16),)
+              ),
+            ),
+          ),
+        ) :
         
         Padding(
           padding: const EdgeInsets.only(bottom: 30),

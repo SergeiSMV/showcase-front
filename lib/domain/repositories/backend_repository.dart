@@ -18,4 +18,12 @@ abstract class BackendRepository{
 
   Future backendPutCart(Map putData);
 
+  Future<void> putIncrement(int clientID, int productID);
+
+  Future<void> putDecrement(int clientID, int productID, int cartQuantity);
+
+  Future<void> putDelete(int clientID, int productID);
+
+  Future<void> putExact(int clientID, int productID, int exact);
+
 }

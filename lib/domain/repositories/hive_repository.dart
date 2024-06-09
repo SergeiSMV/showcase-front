@@ -6,4 +6,8 @@ abstract class HiveRepository{
 
   Future<String> getToken();
 
+  Future<void> saveServerURL(String url);
+
+  Future<String> getServerURL();
+
 }

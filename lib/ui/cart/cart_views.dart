@@ -1,7 +1,4 @@
 
-
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -16,7 +13,8 @@ import '../categories/indicate_quantity.dart';
 
 class CartViews extends ConsumerStatefulWidget {
   final CartModel cartProduct;
-  const CartViews({super.key, required this.cartProduct,});
+  final int clientID;
+  const CartViews({super.key, required this.cartProduct, required this.clientID});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _CartViewsState();
@@ -26,6 +24,7 @@ class _CartViewsState extends ConsumerState<CartViews> {
 
   final TextEditingController _quantityController = TextEditingController();
   final PageController _controller = PageController();
+  final BackendImplements backend = BackendImplements();
 
   List pictures = [
     {'product_id': 45, 'picture_url': '/get-picture/by_id/45-1', 'picture_position': 1},
@@ -70,40 +69,8 @@ class _CartViewsState extends ConsumerState<CartViews> {
           children: [
             Column(
               children: [
-                SizedBox(
-                  height: 120,
-                  width: 120,
-                  child: AspectRatio(
-                    aspectRatio: 1,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.white,
-                      ),
-                      child: widget.cartProduct.pictures.isEmpty ? Image.asset(categoryImagePath['empty'], scale: 4,) : 
-                      PageView.builder(
-                        controller: _controller,
-                        itemCount: widget.cartProduct.pictures.length,
-                        itemBuilder: (context, picIndex) {
-                          String picURL = widget.cartProduct.pictures[picIndex]['picture_url'];
-                          return FutureBuilder<Image>(
-                            future: BackendImplements().backendPicture(picURL),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                return const Center(child: CircularProgressIndicator());
-                              } else if (snapshot.hasError) {
-                                return Image.asset(categoryImagePath['empty'], scale: 4,);
-                              } else {
-                                return snapshot.data!;
-                              }
-                            },
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-                widget.cartProduct.pictures.isEmpty || widget.cartProduct.pictures.length == 1 ? const SizedBox.shrink() : imageIndicator(widget.cartProduct.pictures.length),
+                goodsImages(),
+                imageIndicator(widget.cartProduct.pictures.length),
               ],
             ),
             Expanded(
@@ -132,18 +99,24 @@ class _CartViewsState extends ConsumerState<CartViews> {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 5),
                           child: InkWell(
-                            onTap: () => indicateQuantity(context, _quantityController, widget.cartProduct.name).then((_){
-                              putExact();
+                            onTap: () => indicateQuantity(context, _quantityController, widget.cartProduct.name).then((_) async {
+                              await backend.putExact(widget.clientID, widget.cartProduct.id, int.parse(_quantityController.text)).then(
+                                (_) => ref.refresh(baseCartsProvider(widget.clientID))
+                              );
                             }),
                             child: Center(
-                              child: Text('${widget.cartProduct.quantity} шт.', style: darkGoods(20, FontWeight.w500),)
+                              child: Text('${widget.cartProduct.quantity} шт.', style: darkProduct(20, FontWeight.w500),)
                             ),
                           ),
                         ),
                         quantityControlButton('plus'),
                         const Spacer(),
                         IconButton(
-                          onPressed: (){ delete(); }, 
+                          onPressed: () async { 
+                            await backend.putDelete(widget.clientID, widget.cartProduct.id).then(
+                              (_) => ref.refresh(baseCartsProvider(widget.clientID))
+                            );
+                          }, 
                           icon: Icon(MdiIcons.delete, color: Colors.red, size: 25,)
                         )
                       ],
@@ -158,97 +131,66 @@ class _CartViewsState extends ConsumerState<CartViews> {
     );
   }
 
+  SizedBox goodsImages() {
+    return SizedBox(
+      height: 120,
+      width: 120,
+      child: AspectRatio(
+        aspectRatio: 1,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Colors.white,
+          ),
+          child: widget.cartProduct.pictures.isEmpty ? Image.asset(categoryImagePath['empty'], scale: 4,) : 
+          PageView.builder(
+            controller: _controller,
+            itemCount: widget.cartProduct.pictures.length,
+            itemBuilder: (context, picIndex) {
+              String picURL = widget.cartProduct.pictures[picIndex]['picture_url'];
+              return FutureBuilder<Image>(
+                future: BackendImplements().backendPicture(picURL),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Image.asset(categoryImagePath['empty'], scale: 4,);
+                  } else {
+                    return snapshot.data!;
+                  }
+                },
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
   SizedBox quantityControlButton(String operation) {
     return SizedBox(
       width: 40,
       child: IconButton(
         onPressed: () async {
-          operation == 'plus' ? await putIncrement() : putDecrement();
+          operation == 'plus' ? 
+          await backend.putIncrement(widget.clientID, widget.cartProduct.id).then(
+            (_) => ref.refresh(baseCartsProvider(widget.clientID))
+          ) 
+          : 
+          await backend.putDecrement(widget.clientID, widget.cartProduct.id, widget.cartProduct.quantity).then(
+            (_) => ref.refresh(baseCartsProvider(widget.clientID))
+          );
         }, 
         icon: operation == 'plus' ? Icon(MdiIcons.plus, color: Colors.black, size: 20,) : 
             Icon(MdiIcons.minus, color: Colors.black, size: 20,)
       )
-      
-      
-      /*
-      ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          elevation: 0,
-          padding: const EdgeInsets.symmetric(horizontal: 3.0, vertical: 3.0),
-          backgroundColor: Colors.transparent, //const Color(0xFF00B737),
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: operation == 'plus' ? const BorderRadius.only(topRight: Radius.circular(10), bottomRight: Radius.circular(10)) :
-              const BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10)),
-          ),
-        ),
-        onPressed: () async { 
-          operation == 'plus' ? await putIncrement() : putDecrement();
-        }, 
-        child: Center(
-          child: operation == 'plus' ? Icon(MdiIcons.plus, color: Colors.black, size: 20,) : 
-            Icon(MdiIcons.minus, color: Colors.black, size: 20,)
-        )
-      ),
-      */
-
     );
-  }
-
-  Future<void> putExact() async {
-    int clientID = ref.read(clientIDProvider);
-    int? quantityExact = int.parse(_quantityController.text);
-    int? quantityIncr;
-    Map putData = {
-      "client_id": clientID,
-      "product_id": widget.cartProduct.id,
-      "quantity_incr": quantityIncr,
-      "quantity_exact": quantityExact
-    };
-    await BackendImplements().backendPutCart(putData).then((value) => ref.refresh(baseCartsProvider(clientID)));
-    
-  }
-
-  Future<void> putDecrement() async {
-    int clientID = ref.read(clientIDProvider);
-    int? quantityExact;
-    var quantityIncr = widget.cartProduct.quantity == 1 ? quantityExact = 0 : -1;
-    Map putData = {
-      "client_id": clientID,
-      "product_id": widget.cartProduct.id,
-      "quantity_incr": quantityIncr,
-      "quantity_exact": quantityExact
-    };
-    await BackendImplements().backendPutCart(putData).then((value) => ref.refresh(baseCartsProvider(clientID)));
-  }
-
-  Future<void> putIncrement() async {
-    int clientID = ref.read(clientIDProvider);
-    Map putData = {
-      "client_id": clientID,
-      "product_id": widget.cartProduct.id,
-      "quantity_incr": 1,
-      "quantity_exact": null
-    };
-    await BackendImplements().backendPutCart(putData).then((value) => ref.refresh(baseCartsProvider(clientID)));
-  }
-
-  Future<void> delete() async {
-    int clientID = ref.read(clientIDProvider);
-    int? quantityIncr;
-    Map putData = {
-      "client_id": clientID,
-      "product_id": widget.cartProduct.id,
-      "quantity_incr": quantityIncr,
-      "quantity_exact": 0
-    };
-    await BackendImplements().backendPutCart(putData).then((value) => ref.refresh(baseCartsProvider(clientID)));
-    
   }
 
 
   Widget imageIndicator(int picturesCount) {
-    return Padding(
+    return picturesCount < 2 ? const SizedBox.shrink() : 
+    Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: SmoothPageIndicator(
         controller: _controller,
@@ -271,7 +213,7 @@ class _CartViewsState extends ConsumerState<CartViews> {
           Text('цена: $clientPrice', style: darkCategory(16), overflow: TextOverflow.fade,),
           Text('₽', style: grey(16), overflow: TextOverflow.fade,),
           const SizedBox(width: 10,),
-          Text('$basePrice₽', style: throughPrice(16, FontWeight.normal)),
+          Text('$basePrice₽', style: blackThroughPrice(16, FontWeight.normal)),
         ],
       );
     } else {

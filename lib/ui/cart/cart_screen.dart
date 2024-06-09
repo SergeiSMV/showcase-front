@@ -1,14 +1,7 @@
 
-
-
-
-
-
-import 'package:dotlottie_loader/dotlottie_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lottie/lottie.dart';
 import 'package:showcase_front/constants/fonts.dart';
 import 'package:showcase_front/data/models/cart_model/cart_model.dart';
 
@@ -61,36 +54,64 @@ class _CartScreenState extends ConsumerState<CartScreen> {
           ),
         ) :
         
-        Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Expanded(
-              child: Consumer(
-                builder: (context, ref, child){
-                  return ref.watch(baseCartsProvider(clientID)).when(
-                    loading: () => const Loading(),
-                    error: (error, _) => Center(child: Text(error.toString())),
-                    data: (_){
-                      final ordersGoods = ref.watch(cartProvider);
-                      
-                      return ordersGoods.isEmpty ? 
-                      emptyCart():
-                      
+        Consumer(
+          builder: (context, ref, child) {
+            return ref.watch(baseCartsProvider(clientID)).when(
+              loading: () => const Loading(),
+              error: (error, _) => Center(child: Text(error.toString())),
+              data: (_){
+
+                final ordersProduct = ref.watch(cartProvider);
+                
+                return ordersProduct.isEmpty ? emptyCart():
+                Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft, 
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 7),
+                        child: Text('Корзина', style: black(30, FontWeight.bold), overflow: TextOverflow.clip,),
+                      )
+                    ),
+                    Expanded(
+                      child: ordersProduct.isEmpty ? emptyCart():
                       ListView.builder(
                         physics: const BouncingScrollPhysics(),
                         shrinkWrap: true,
-                        itemCount: ordersGoods.length,
+                        itemCount: ordersProduct.length,
                         itemBuilder: (BuildContext context, int index){
-                          CartModel cartProduct = CartModel(cart: ordersGoods[index]);
-                          return CartViews(cartProduct: cartProduct);
+                          CartModel cartProduct = CartModel(cart: ordersProduct[index]);
+                          return CartViews(cartProduct: cartProduct, clientID: clientID,);
                         }
-                      );
-                    },
-                  );
-                },
-              ),
-            ),
-          ],
+                      ),
+                    ),
+                    const Divider(indent: 10, endIndent: 10,),
+                    totalPrice(ordersProduct),
+                    SizedBox(
+                      width: double.infinity,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF00B737),
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          onPressed: () {
+                            
+                          }, 
+                          child: Text('заказать', style: white(18),)
+                        ),
+                      ),
+                    )
+                  ],
+                );
+              },
+            );
+          }
         ),
       ),
     );
@@ -105,6 +126,26 @@ class _CartScreenState extends ConsumerState<CartScreen> {
         const SizedBox(height: 15,),
         Text('корзина пуста', style: black(18),)
       ],
+    );
+  }
+
+  Widget totalPrice(List ordersProduct){
+    int sum = 0;
+    for (var product in ordersProduct) {
+      int productTotal = (product['total'] * 100).round();
+      sum += productTotal;
+    }
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      child: Row(
+        children: [
+          Text('итого:', style: darkProduct(20),),
+          const SizedBox(width: 8,),
+          Text('${sum / 100}', style: darkProduct(24, FontWeight.bold),),
+          const SizedBox(width: 1,),
+          Text('₽', style: grey(20, FontWeight.normal), overflow: TextOverflow.fade,),
+        ],
+      ),
     );
   }
 

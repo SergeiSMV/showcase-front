@@ -96,7 +96,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
               onTap: (){ 
                 category.children.isEmpty ?
                 GoRouter.of(context).push(
-                  '/goods',
+                  '/products',
                   extra: {
                     'mainCategory': category.name,
                     'categoryID': category.id

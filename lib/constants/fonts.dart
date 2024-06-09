@@ -11,10 +11,20 @@ TextStyle whiteBanner(double size, [FontWeight weight = FontWeight.normal]) => G
 
 TextStyle darkCategory(double size, [FontWeight weight = FontWeight.normal]) => GoogleFonts.sourceSans3(color: Colors.black87, fontSize: size, fontWeight: weight, height: 0.9);
 
-TextStyle darkGoods(double size, [FontWeight weight = FontWeight.normal]) => GoogleFonts.sourceSans3(color: Colors.black87, fontSize: size, fontWeight: weight, height: 1);
+TextStyle darkProduct(double size, [FontWeight weight = FontWeight.normal]) => GoogleFonts.sourceSans3(color: Colors.black87, fontSize: size, fontWeight: weight, height: 1);
 
-TextStyle throughPrice(double size, [FontWeight weight = FontWeight.normal]) => GoogleFonts.sourceSans3(
+TextStyle blackThroughPrice(double size, [FontWeight weight = FontWeight.normal]) => GoogleFonts.sourceSans3(
   color: Colors.black87, 
+  fontSize: size, 
+  fontWeight: weight, 
+  height: 1,
+  decoration: TextDecoration.lineThrough,
+  decorationColor: Colors.red,
+  decorationThickness: 3.0,
+);
+
+TextStyle whiteThroughPrice(double size, [FontWeight weight = FontWeight.normal]) => GoogleFonts.sourceSans3(
+  color: Colors.white, 
   fontSize: size, 
   fontWeight: weight, 
   height: 1,

@@ -4,15 +4,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'repositories/backend_implements.dart';
 
+final serverURLProvider = StateProvider<String>((ref) => '');
+
 // состояние индекса bottomNavigationBar
 final bottomNavIndexProvider = StateProvider<int>((ref) => 0);
 
+// провайдеры авторизации
 final isAutgorizedProvider = StateProvider<bool>((ref) => false);
 final clientIDProvider = StateProvider<int>((ref) => 0);
 
+// провайдер бэйджика корзины
 final cartBadgesProvider = StateProvider<int>((ref) => 0);
 
-
+// провайдер категорий
 final categoriesProvider = StateProvider<List>((ref) => []);
 
 final baseCategoriesProvider = FutureProvider.autoDispose((ref) async {
@@ -20,7 +24,7 @@ final baseCategoriesProvider = FutureProvider.autoDispose((ref) async {
   ref.read(categoriesProvider.notifier).state = result;
 });
 
-
+// провайдер товаров
 final productsProvider = StateProvider<List>((ref) => []);
 
 final baseProductsProvider = FutureProvider.autoDispose.family<List, int>((ref, categoryID) async {
@@ -29,7 +33,7 @@ final baseProductsProvider = FutureProvider.autoDispose.family<List, int>((ref, 
   return result;
 });
 
-
+// провайдер корзины
 final cartProvider = StateProvider<List>((ref) => []);
 
 final baseCartsProvider = FutureProvider.autoDispose.family<List, int>((ref, clientID) async {

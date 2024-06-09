@@ -5,21 +5,21 @@ import 'package:go_router/go_router.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import '../../constants/fonts.dart';
-import '../../data/models/goods_model/goods_model.dart';
+import '../../data/models/product_model/product_model.dart';
 import '../../data/providers.dart';
 import '../widgets/loading.dart';
-import 'goods_views.dart';
+import 'products_views.dart';
 
-class GoodsScreen extends ConsumerStatefulWidget {
+class ProductsScreen extends ConsumerStatefulWidget {
   final int categoryID;
   final String mainCategory;
-  const GoodsScreen({super.key, required this.categoryID, required this.mainCategory});
+  const ProductsScreen({super.key, required this.categoryID, required this.mainCategory});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _GoodsScreenState();
 }
 
-class _GoodsScreenState extends ConsumerState<GoodsScreen> {
+class _GoodsScreenState extends ConsumerState<ProductsScreen> {
 
   @override
   void initState(){
@@ -142,8 +142,8 @@ class _GoodsScreenState extends ConsumerState<GoodsScreen> {
           childAspectRatio: 0.55
         ),
         itemBuilder: (BuildContext context, int index) {
-          GoodsModel currentGoods = GoodsModel(goods: goods[index]);
-          return GoodsViews(currentGoods: currentGoods,);
+          ProductModel currentGoods = ProductModel(product: goods[index]);
+          return ProductsViews(currentProduct: currentGoods,);
         },
       ),
     );
