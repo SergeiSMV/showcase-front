@@ -5,8 +5,6 @@ import 'package:showcase_front/constants/fonts.dart';
 
 changeServer(BuildContext mainContext, TextEditingController controller){
 
-  print(controller.text);
-
   return showModalBottomSheet(
     isScrollControlled: true,
     backgroundColor: Colors.transparent,

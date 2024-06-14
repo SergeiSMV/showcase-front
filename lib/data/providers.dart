@@ -42,3 +42,12 @@ final baseCartsProvider = FutureProvider.autoDispose.family<List, int>((ref, cli
   ref.read(cartProvider.notifier).state = result;
   return result;
 });
+
+// провайдер заказов
+final requestsProvider = StateProvider<List>((ref) => []);
+
+final baseRequestsProvider = FutureProvider.autoDispose.family<List, int>((ref, clientID) async {
+  final result = await BackendImplements().backendGetRequests(clientID);
+  ref.read(requestsProvider.notifier).state = result;
+  return result;
+});

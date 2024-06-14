@@ -2,10 +2,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:showcase_front/constants/fonts.dart';
 import 'package:showcase_front/data/repositories/hive_implements.dart';
 
 import '../../data/providers.dart';
+import '../widgets/loading.dart';
+import '../widgets/scaffold_messenger.dart';
 
 
 
@@ -28,96 +31,143 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: 
-        clientID == 0 ?
-
-        Padding(
-          padding: const EdgeInsets.only(bottom: 30),
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: SizedBox(
-              width: 300,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF00B737),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                onPressed: () { 
-                  GoRouter.of(context).push('/auth');
-                }, 
-                child: Text('авторизоваться', style: white(16),)
-              ),
-            ),
-          ),
-        ) :
+        clientID == 0 ? authButton(context) :
         
         Padding(
-          padding: const EdgeInsets.only(bottom: 30),
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: SizedBox(
-              width: 300,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF00B737),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Column(
+            children: [
+              header(),
+              const SizedBox(height: 10,),
+              Align(alignment: Alignment.centerLeft, child: Text('Заказы:', style: darkCategory(24, FontWeight.bold),)),
+              const Divider(color: Colors.grey, indent: 0, endIndent: 5,),
+              Expanded(
+                child: Consumer(
+                  builder: (context, ref, child){
+                    return ref.watch(baseRequestsProvider(clientID)).when(
+                      loading: () => const Loading(),
+                      error: (error, _) => Center(child: Text(error.toString())),
+                      data: (_){
+                        final allRequests = ref.watch(requestsProvider);
+                        return allRequests.isEmpty ? Container() : // Text(allRequests.toString(), style: black(12),);
+                        ListView.builder(
+                          physics: const BouncingScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: allRequests.length,
+                          itemBuilder: (BuildContext context, int index){
+                            // CategoryModel category = CategoryModel(categories: subCategories[index]);
+                            return InkWell(
+                              onTap: (){},
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 3),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                      width: 3,
+                                      color: Colors.transparent,
+                                    ),
+                                    color: Colors.white,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.2),
+                                        spreadRadius: 1,
+                                        blurRadius: 1,
+                                        offset: const Offset(1, 1),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text('заказ ${allRequests[index]['order_request_id']}', style: darkCategory(18, FontWeight.w500), overflow: TextOverflow.clip,),
+                                      const SizedBox(height: 3,),
+                                      Text('дата заказа: №${allRequests[index]['order_request_id']}', style: darkCategory(16, FontWeight.normal), overflow: TextOverflow.clip,),
+                                      Text('время заказа: №${allRequests[index]['order_request_id']}', style: darkCategory(16, FontWeight.normal), overflow: TextOverflow.clip,),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+                        );
+                      },  
+                    );
+                  },
                 ),
-                onPressed: () async { 
+              )
+            ],
+          ),
+        )
+      ),
+    );
+  }
+
+  Widget header(){
+    return Align(
+      alignment: Alignment.centerLeft, 
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Text('Клиент', style: darkCategory(30, FontWeight.bold), overflow: TextOverflow.clip,),
+              const Expanded(child: SizedBox(width: 10,)),
+              IconButton(
+                onPressed: () {
+                  PaintingBinding.instance.imageCache.clear();
+                  PaintingBinding.instance.imageCache.clearLiveImages();
+                  GlobalScaffoldMessenger.instance.showSnackBar("кэш приложения очищен");
+                }, 
+                icon: Icon(MdiIcons.sprayBottle, size: 25,)
+              ),
+              IconButton(
+                onPressed: () async {
                   await HiveImplements().saveToken('').then((_) {
                     ref.invalidate(baseProductsProvider);
                     ref.invalidate(baseCartsProvider);
                     ref.read(isAutgorizedProvider.notifier).state = false;
                     ref.read(clientIDProvider.notifier).state = 0;
-                    // ref.read(bottomNavIndexProvider.notifier).state = 0;
                     ref.read(cartBadgesProvider.notifier).state = 0;
-                    // GoRouter.of(context).pushReplacement('/');
                   });
                 }, 
-                child: Text('выйти', style: white(16),)
+                icon: Icon(MdiIcons.exitToApp, size: 25,)
+              ),
+            ],
+          ),
+          // Text('id клиента:', style: darkCategory(16, FontWeight.normal), overflow: TextOverflow.clip,),
+        ],
+      )
+    );
+  }
+
+  Padding authButton(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 30),
+      child: Align(
+        alignment: Alignment.bottomCenter,
+        child: SizedBox(
+          width: 300,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF00B737),
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
               ),
             ),
+            onPressed: () { 
+              GoRouter.of(context).push('/auth');
+            }, 
+            child: Text('авторизоваться', style: white(16),)
           ),
         ),
       ),
     );
   }
+
+
+
 }
-
-
-
-
-
-/*
-class AccountScreen extends StatelessWidget {
-  const AccountScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF00B737),
-            foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-          onPressed: () async { 
-            Future.delayed(const Duration(seconds: 1), () {
-              return ref.refresh(baseCategoriesProvider);
-            });
-          }, 
-          child: Text('обновить', style: white(16),)
-        ),,
-      ),
-    );
-  }
-}
-*/

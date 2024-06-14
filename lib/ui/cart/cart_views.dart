@@ -1,10 +1,12 @@
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../../constants/fonts.dart';
+import '../../constants/server_config.dart';
 import '../../data/models/cart_model/cart_model.dart';
 import '../../data/models/category_model/category_data.dart';
 import '../../data/providers.dart';
@@ -25,12 +27,6 @@ class _CartViewsState extends ConsumerState<CartViews> {
   final TextEditingController _quantityController = TextEditingController();
   final PageController _controller = PageController();
   final BackendImplements backend = BackendImplements();
-
-  List pictures = [
-    {'product_id': 45, 'picture_url': '/get-picture/by_id/45-1', 'picture_position': 1},
-    {'product_id': 43, 'picture_url': '/get-picture/by_id/43-1', 'picture_position': 1},
-    {'product_id': 50, 'picture_url': '/get-picture/by_id/50-1', 'picture_position': 1}
-  ];
 
   @override
   void initState(){
@@ -69,7 +65,7 @@ class _CartViewsState extends ConsumerState<CartViews> {
           children: [
             Column(
               children: [
-                goodsImages(),
+                productImages(),
                 imageIndicator(widget.cartProduct.pictures.length),
               ],
             ),
@@ -101,7 +97,10 @@ class _CartViewsState extends ConsumerState<CartViews> {
                           child: InkWell(
                             onTap: () => indicateQuantity(context, _quantityController, widget.cartProduct.name).then((_) async {
                               await backend.putExact(widget.clientID, widget.cartProduct.id, int.parse(_quantityController.text)).then(
-                                (_) => ref.refresh(baseCartsProvider(widget.clientID))
+                                (updateCart) { 
+                                  ref.read(cartBadgesProvider.notifier).state = updateCart.length;
+                                  ref.read(cartProvider.notifier).state = updateCart;
+                                }
                               );
                             }),
                             child: Center(
@@ -114,7 +113,10 @@ class _CartViewsState extends ConsumerState<CartViews> {
                         IconButton(
                           onPressed: () async { 
                             await backend.putDelete(widget.clientID, widget.cartProduct.id).then(
-                              (_) => ref.refresh(baseCartsProvider(widget.clientID))
+                              (updateCart) { 
+                                ref.read(cartBadgesProvider.notifier).state = updateCart.length;
+                                ref.read(cartProvider.notifier).state = updateCart;
+                              }
                             );
                           }, 
                           icon: Icon(MdiIcons.delete, color: Colors.red, size: 25,)
@@ -131,7 +133,7 @@ class _CartViewsState extends ConsumerState<CartViews> {
     );
   }
 
-  SizedBox goodsImages() {
+  SizedBox productImages() {
     return SizedBox(
       height: 120,
       width: 120,
@@ -148,6 +150,12 @@ class _CartViewsState extends ConsumerState<CartViews> {
             itemCount: widget.cartProduct.pictures.length,
             itemBuilder: (context, picIndex) {
               String picURL = widget.cartProduct.pictures[picIndex]['picture_url'];
+              return CachedNetworkImage(
+                imageUrl: '$apiURL$picURL',
+                errorWidget: (context, url, error) => Align(alignment: Alignment.bottomCenter, child: Opacity(opacity: 0.3, child: Image.asset(categoryImagePath['empty'], scale: 3))),
+              );
+
+              /*
               return FutureBuilder<Image>(
                 future: BackendImplements().backendPicture(picURL),
                 builder: (context, snapshot) {
@@ -160,6 +168,8 @@ class _CartViewsState extends ConsumerState<CartViews> {
                   }
                 },
               );
+              */
+
             },
           ),
         ),
@@ -174,11 +184,17 @@ class _CartViewsState extends ConsumerState<CartViews> {
         onPressed: () async {
           operation == 'plus' ? 
           await backend.putIncrement(widget.clientID, widget.cartProduct.id).then(
-            (_) => ref.refresh(baseCartsProvider(widget.clientID))
+            (updateCart) { 
+              ref.read(cartBadgesProvider.notifier).state = updateCart.length;
+              ref.read(cartProvider.notifier).state = updateCart;
+            }
           ) 
           : 
           await backend.putDecrement(widget.clientID, widget.cartProduct.id, widget.cartProduct.quantity).then(
-            (_) => ref.refresh(baseCartsProvider(widget.clientID))
+            (updateCart) { 
+              ref.read(cartBadgesProvider.notifier).state = updateCart.length;
+              ref.read(cartProvider.notifier).state = updateCart;
+            }
           );
         }, 
         icon: operation == 'plus' ? Icon(MdiIcons.plus, color: Colors.black, size: 20,) : 
@@ -211,16 +227,17 @@ class _CartViewsState extends ConsumerState<CartViews> {
       return Row(
         children: [
           Text('цена: $clientPrice', style: darkCategory(16), overflow: TextOverflow.fade,),
-          Text('₽', style: grey(16), overflow: TextOverflow.fade,),
+          Text('₽', style: grey(14), overflow: TextOverflow.fade,),
           const SizedBox(width: 10,),
-          Text('$basePrice₽', style: blackThroughPrice(16, FontWeight.normal)),
+          Text('$basePrice', style: blackThroughPrice(16)),
+          Text('₽', style: grey(14), overflow: TextOverflow.fade,),
         ],
       );
     } else {
       return Row(
         children: [
           Text('цена: $clientPrice', style: darkCategory(16)),
-          Text('₽', style: grey(16, FontWeight.normal), overflow: TextOverflow.fade,),
+          Text('₽', style: grey(14, FontWeight.normal), overflow: TextOverflow.fade,),
         ],
       );
     }

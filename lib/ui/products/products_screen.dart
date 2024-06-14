@@ -38,8 +38,7 @@ class _GoodsScreenState extends ConsumerState<ProductsScreen> {
             header(context),
             authorizedBanner(),
             const SizedBox(height: 10,),
-            goodsViews()
-            
+            productsViews()
           ],
         ),
       ),
@@ -103,7 +102,7 @@ class _GoodsScreenState extends ConsumerState<ProductsScreen> {
     );
   }
 
-  Expanded goodsViews() {
+  Expanded productsViews() {
     return Expanded(
       child: Consumer(
         builder: (context, ref, child){
@@ -111,8 +110,8 @@ class _GoodsScreenState extends ConsumerState<ProductsScreen> {
             loading: () => const Loading(),
             error: (error, _) => Center(child: Text(error.toString())),
             data: (_){
-              final allGoods = ref.watch(productsProvider);
-              return allGoods.isEmpty ? update(ref) : goods(ref, allGoods);
+              final allProducts = ref.watch(productsProvider);
+              return allProducts.isEmpty ? update(ref) : products(ref, allProducts);
             },  
           );
         },
@@ -121,31 +120,21 @@ class _GoodsScreenState extends ConsumerState<ProductsScreen> {
   }
 
 
-  RefreshIndicator goods(WidgetRef ref, List<dynamic> goods) {
-    return RefreshIndicator(
-      color: Colors.green,
-      onRefresh: () {
-        return Future.delayed(const Duration(seconds: 3), () {
-          if (mounted){
-            // return ref.refresh(baseCategoriesProvider);
-          }
-        });
-      },
-      child: GridView.builder(
-        shrinkWrap: true,
-        physics: const BouncingScrollPhysics(),
-        itemCount: goods.length,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisSpacing: 5,
-          crossAxisSpacing: 10,
-          childAspectRatio: 0.55
-        ),
-        itemBuilder: (BuildContext context, int index) {
-          ProductModel currentGoods = ProductModel(product: goods[index]);
-          return ProductsViews(currentProduct: currentGoods,);
-        },
+  Widget products(WidgetRef ref, List<dynamic> allProducts) {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const BouncingScrollPhysics(),
+      itemCount: allProducts.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 5,
+        crossAxisSpacing: 10,
+        childAspectRatio: 0.55
       ),
+      itemBuilder: (BuildContext context, int index) {
+        ProductModel categoryProducts = ProductModel(product: allProducts[index]);
+        return ProductsViews(currentProduct: categoryProducts,);
+      },
     );
   }
 
@@ -158,23 +147,6 @@ class _GoodsScreenState extends ConsumerState<ProductsScreen> {
         const SizedBox(height: 10,),
         Text('товара нет', style: black(20, FontWeight.w500),),
         const SizedBox(height: 10,),
-        /*
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF00B737),
-            foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-          onPressed: () async { 
-            Future.delayed(const Duration(seconds: 1), () {
-              return ref.refresh(baseProductsProvider(widget.categoryID));
-            });
-          }, 
-          child: Text('обновить', style: white(16),)
-        ),
-        */
       ],
     );
   }

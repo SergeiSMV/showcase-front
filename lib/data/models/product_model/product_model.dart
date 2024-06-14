@@ -21,7 +21,7 @@ class ProductModel with _$ProductModel {
   List get pictures => product['pictures'] ?? [];
   String get discription => product['product_description'];
   int get quantity => product['quantity'];
-  double get basePrice => product['base_price'] ?? product['price'];
-  double get clientPrice => product['client_price'];
+  double get basePrice => product['price']['base_price'] ?? 0;
+  double get clientPrice => product['price']['price'];
 
 }

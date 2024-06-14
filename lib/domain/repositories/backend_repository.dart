@@ -10,7 +10,7 @@ abstract class BackendRepository{
 
   Future<List> backendProducts(int categoryID);
 
-  Future<Image> backendPicture(String picURL);
+  // Future<Image> backendPicture(String picURL);
 
   Future<String> authorization(String login, String pass);
 
@@ -18,12 +18,18 @@ abstract class BackendRepository{
 
   Future backendPutCart(Map putData);
 
-  Future<void> putIncrement(int clientID, int productID);
+  Future<List> putIncrement(int clientID, int productID);
 
-  Future<void> putDecrement(int clientID, int productID, int cartQuantity);
+  Future<List> putDecrement(int clientID, int productID, int cartQuantity);
 
-  Future<void> putDelete(int clientID, int productID);
+  Future<List> putDelete(int clientID, int productID);
 
-  Future<void> putExact(int clientID, int productID, int exact);
+  Future<List> putExact(int clientID, int productID, int exact);
+
+  Future<List> backendGetRequests(int clientID);
+
+  Future<void> newRequests();
+
+  Future<List> searchProduct(String keywords);
 
 }

@@ -16,9 +16,8 @@ class CategoryModel with _$CategoryModel {
   factory CategoryModel.fromJson(Map<String, dynamic> json) => _$CategoryModelFromJson(json);
 
   String get name => categories['name'];
-  int get id => categories['category_id'];
-  bool get hasPicture => categories['has_picture'];
   List get children => categories['children'] ?? [];
-  String get imagePath => categoryImagePath[id] ?? categoryImagePath['empty'];
+  String get thumbnail => categories['thumbnail'] ?? categoryImagePath['empty'];
+  int get id => categories['category_id'];
 
 }

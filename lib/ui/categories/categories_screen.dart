@@ -1,9 +1,14 @@
 
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:showcase_front/constants/fonts.dart';
+import 'package:showcase_front/constants/server_config.dart';
 
+import '../../data/models/category_model/category_data.dart';
 import '../../data/models/category_model/category_model.dart';
 import '../../data/providers.dart';
 import '../widgets/loading.dart';
@@ -42,14 +47,33 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
     );
   }
 
-  Align header() {
-    return Align(
+  Widget header() {
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 7),
+          child: Text('Категории товаров', style: black(30, FontWeight.bold), overflow: TextOverflow.clip,),
+        ),
+        const Expanded(child: SizedBox(width: 10,)),
+        Padding(
+          padding: const EdgeInsets.only(right: 10),
+          child: IconButton(
+            onPressed: (){ 
+              GoRouter.of(context).push('/search',);
+            }, 
+            icon: Icon(MdiIcons.magnify, size: 30,)),
+        )
+      ],
+    );
+    /*
+    Align(
       alignment: Alignment.centerLeft, 
       child: Padding(
         padding: const EdgeInsets.only(left: 7),
         child: Text('Категории товаров', style: black(30, FontWeight.bold), overflow: TextOverflow.clip,),
       )
     );
+    */
   }
 
   Expanded categoryViews() {
@@ -60,8 +84,8 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
             loading: () => const Loading(),
             error: (error, _) => Center(child: Text(error.toString())),
             data: (_){
-              final mainCategories = ref.watch(categoriesProvider);
-              return mainCategories.isEmpty ? update(ref) : categories(ref, mainCategories);
+              final allCategories = ref.watch(categoriesProvider);
+              return allCategories.isEmpty ? update(ref) : categories(ref, allCategories);
             },  
           );
         },
@@ -112,18 +136,8 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                 );
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    width: 3,
-                    color: Colors.transparent,
-                  ),
-                  image: DecorationImage(
-                    opacity: category.imagePath == 'lib/images/categories/empty.png' ? 0.2 : 0.9,
-                    image: AssetImage(category.imagePath),
-                    fit: BoxFit.contain,
-                  ),
                   color: Colors.white,
                   boxShadow: [
                     BoxShadow(
@@ -134,7 +148,38 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                     ),
                   ],
                 ),
-                child: Text(category.name, style: darkCategory(18, FontWeight.w500),),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Stack(
+                    fit: StackFit.passthrough,
+                    children: [
+                      FittedBox(
+                        fit: BoxFit.cover,
+                        child: CachedNetworkImage(
+                          imageUrl: '$apiURL${category.thumbnail}',
+                          errorWidget: (context, url, error) => SizedBox(
+                            width: 180,
+                            height: 180,
+                            child: Align(
+                              alignment: Alignment.bottomCenter, 
+                              child: Opacity(
+                                opacity: 0.3, child: 
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 10),
+                                  child: Image.asset(categoryImagePath['empty'], scale: 3),
+                                )
+                              )
+                            ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 5, top: 10),
+                        child: Text(category.name, style: darkCategory(18, FontWeight.w500),),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
           );

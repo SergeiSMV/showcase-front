@@ -1,11 +1,14 @@
 
 
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import '../../constants/fonts.dart';
+import '../../constants/server_config.dart';
+import '../../data/models/category_model/category_data.dart';
 import '../../data/models/category_model/category_model.dart';
 
 class SubCategoriesScreen extends StatelessWidget {
@@ -60,6 +63,7 @@ class SubCategoriesScreen extends StatelessWidget {
   }
 
   Expanded subCategoriesViews() {
+    print(subCategories);
     return Expanded(
       child: ListView.builder(
         physics: const BouncingScrollPhysics(),
@@ -107,20 +111,37 @@ class SubCategoriesScreen extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
+                    
                     Container(
+                      padding: EdgeInsets.zero,
+                      margin: EdgeInsets.zero,
                       height: 100,
                       width: 100,
-                      clipBehavior: Clip.hardEdge,
+                      // clipBehavior: Clip.hardEdge,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        image: DecorationImage(
-                          scale: 4,
-                          opacity: 1,
-                          image: AssetImage(category.imagePath),
-                          fit: BoxFit.scaleDown,
+                        color: Colors.white
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: FittedBox(
+                          fit: BoxFit.cover,
+                          child: category.thumbnail == categoryImagePath['empty'] ? Image.asset(categoryImagePath['empty'], scale: 3) :
+                          CachedNetworkImage(
+                            imageUrl: '$apiURL${category.thumbnail}',
+                            errorWidget: (context, url, error) => SizedBox(
+                              width: 120,
+                              height: 120,
+                              child: Align(
+                                alignment: Alignment.center, 
+                                child: Image.asset(categoryImagePath['empty'], scale: 3)
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ),
+                    
                     const SizedBox(width: 10,),
                     Expanded(
                       child: Text(category.name, style: black(20, FontWeight.w500), overflow: TextOverflow.clip,)

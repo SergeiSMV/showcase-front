@@ -7,7 +7,6 @@ import 'package:showcase_front/constants/server_config.dart';
 import 'package:showcase_front/data/repositories/hive_implements.dart';
 
 import '../../data/providers.dart';
-import '../widgets/scaffold_messenger.dart';
 import 'change_server.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -63,7 +62,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                 ),
                 onPressed: () => changeServer(context, controller).then((_) async {
-                  print(controller.text);
                   await hive.saveServerURL(controller.text).then((value) => ref.read(serverURLProvider.notifier).state = controller.text.toString());
                 }), 
                 child: Text('изменить сервер', style: white(16),)

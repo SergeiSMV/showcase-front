@@ -1,10 +1,12 @@
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../../constants/fonts.dart';
+import '../../constants/server_config.dart';
 import '../../data/models/category_model/category_data.dart';
 import '../../data/models/product_model/product_model.dart';
 import '../../data/providers.dart';
@@ -40,7 +42,7 @@ class _GoodsViewsState extends ConsumerState<ProductsViews> {
   }
 
 
-  bool currentGoodsInCart(List cart){
+  bool currentProductsInCart(List cart){
     bool inCart = false;
     for (var product in cart) {
       if (product['product_id'] == widget.currentProduct.id) {
@@ -51,7 +53,7 @@ class _GoodsViewsState extends ConsumerState<ProductsViews> {
     return inCart;
   }
 
-  Map currentGoodsCartData(List cart){
+  Map currentProductCartData(List cart){
     Map data = {};
     for (var product in cart) {
       if (product['product_id'] == widget.currentProduct.id) {
@@ -111,7 +113,7 @@ class _GoodsViewsState extends ConsumerState<ProductsViews> {
                       return SizedBox(
                         width: double.infinity,
                         child: 
-                        currentGoodsInCart(cart) ? 
+                        currentProductsInCart(cart) ? 
                         Row(
                           children: [
                             quantityControlButton('minus', clientID, cart),
@@ -119,11 +121,14 @@ class _GoodsViewsState extends ConsumerState<ProductsViews> {
                               child: InkWell(
                                 onTap: () => indicateQuantity(context, _quantityController, widget.currentProduct.name).then((_) async {
                                   await backend.putExact(clientID, widget.currentProduct.id, int.parse(_quantityController.text)).then(
-                                    (_) => ref.refresh(baseCartsProvider(clientID))
+                                    (updateCart) { 
+                                      ref.read(cartBadgesProvider.notifier).state = updateCart.length;
+                                      ref.read(cartProvider.notifier).state = updateCart;
+                                    }
                                   );
                                 }),
                                 child: Center(
-                                  child: Text('${currentGoodsCartData(cart)['quantity']}', style: darkProduct(20, FontWeight.w500),)
+                                  child: Text('${currentProductCartData(cart)['quantity']}', style: darkProduct(20, FontWeight.w500),)
                                 ),
                               )
                             ),
@@ -159,11 +164,17 @@ class _GoodsViewsState extends ConsumerState<ProductsViews> {
         onPressed: () async { 
           operation == 'plus' ? 
           await backend.putIncrement(clientID, widget.currentProduct.id).then(
-            (_) => ref.refresh(baseCartsProvider(clientID))
+            (updateCart) { 
+              ref.read(cartBadgesProvider.notifier).state = updateCart.length;
+              ref.read(cartProvider.notifier).state = updateCart;
+            }
           )
           : 
-          await backend.putDecrement(clientID, widget.currentProduct.id, currentGoodsCartData(cart)['quantity']).then(
-            (_) => ref.refresh(baseCartsProvider(clientID))
+          await backend.putDecrement(clientID, widget.currentProduct.id, currentProductCartData(cart)['quantity']).then(
+            (updateCart) { 
+              ref.read(cartBadgesProvider.notifier).state = updateCart.length;
+              ref.read(cartProvider.notifier).state = updateCart;
+            }
           );
         }, 
         child: Center(
@@ -189,7 +200,10 @@ class _GoodsViewsState extends ConsumerState<ProductsViews> {
           onPressed: () async {
             isAutgorized ? 
             await backend.putIncrement(clientID, widget.currentProduct.id).then(
-              (_) => ref.refresh(baseCartsProvider(clientID))
+              (updateCart) { 
+                ref.read(cartBadgesProvider.notifier).state = updateCart.length;
+                ref.read(cartProvider.notifier).state = updateCart;
+              }
             )
             : GlobalScaffoldMessenger.instance.showSnackBar('Вы не авторизованы!', 'error');
           }, 
@@ -212,8 +226,14 @@ class _GoodsViewsState extends ConsumerState<ProductsViews> {
         controller: pageController,
         itemCount: widget.currentProduct.pictures.length,
         itemBuilder: (context, index) {
-          String picURL = widget.currentProduct.pictures[index]['picture_url'];
-          return FutureBuilder<Image>(
+          String picURL = '$apiURL${widget.currentProduct.pictures[index]['picture_url']}';
+          return CachedNetworkImage(
+            imageUrl: picURL,
+            errorWidget: (context, url, error) => Align(alignment: Alignment.center, child: Opacity(opacity: 0.3, child: Image.asset(categoryImagePath['empty'], scale: 3))),
+          );
+          
+          /*
+          FutureBuilder<Image>(
             future: BackendImplements().backendPicture(picURL),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -225,6 +245,7 @@ class _GoodsViewsState extends ConsumerState<ProductsViews> {
               }
             },
           );
+          */
         },
       ),
     );
@@ -248,17 +269,17 @@ class _GoodsViewsState extends ConsumerState<ProductsViews> {
     if (basePrice > clientPrice){
       return Row(
         children: [
-          Text('$clientPrice', style: darkProduct(24, FontWeight.normal), overflow: TextOverflow.fade,),
-          Text('₽', style: grey(20, FontWeight.normal), overflow: TextOverflow.fade,),
+          Text('$clientPrice', style: darkProduct(20, FontWeight.normal), overflow: TextOverflow.fade,),
+          Text('₽', style: grey(18, FontWeight.normal), overflow: TextOverflow.fade,),
           const SizedBox(width: 10,),
-          Text('$basePrice', style: blackThroughPrice(20, FontWeight.normal)),
+          Text('$basePrice₽', style: blackThroughPrice(18, FontWeight.normal)),
         ],
       );
     } else {
       return Row(
         children: [
-          Text('$clientPrice', style: darkProduct(24, FontWeight.normal)),
-          Text('₽', style: grey(20, FontWeight.normal), overflow: TextOverflow.fade,),
+          Text('$clientPrice', style: darkProduct(20, FontWeight.normal)),
+          Text('₽', style: grey(18, FontWeight.normal), overflow: TextOverflow.fade,),
         ],
       );
     }

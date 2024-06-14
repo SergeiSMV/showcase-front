@@ -20,7 +20,7 @@ TextStyle blackThroughPrice(double size, [FontWeight weight = FontWeight.normal]
   height: 1,
   decoration: TextDecoration.lineThrough,
   decorationColor: Colors.red,
-  decorationThickness: 3.0,
+  decorationThickness: 2.0,
 );
 
 TextStyle whiteThroughPrice(double size, [FontWeight weight = FontWeight.normal]) => GoogleFonts.sourceSans3(

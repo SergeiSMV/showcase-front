@@ -1,7 +1,9 @@
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:showcase_front/constants/fonts.dart';
+import 'package:showcase_front/constants/server_config.dart';
 import 'package:showcase_front/data/models/product_model/product_model.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -57,8 +59,14 @@ class _ProductCardState extends State<ProductCard> {
                 controller: pageController,
                 itemCount: widget.product.pictures.length,
                 itemBuilder: (context, index) {
-                  String picURL = widget.product.pictures[index]['picture_url'];
-                  return FutureBuilder<Image>(
+                  String picURL = '$apiURL${widget.product.pictures[index]['picture_url']}';
+                  return CachedNetworkImage(
+                    imageUrl: picURL,
+                    errorWidget: (context, url, error) => Align(alignment: Alignment.center, child: Opacity(opacity: 0.3, child: Image.asset(categoryImagePath['empty'], scale: 3))),
+                  );
+                  
+                  /*
+                  FutureBuilder<Image>(
                     future: BackendImplements().backendPicture(picURL),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
@@ -70,6 +78,7 @@ class _ProductCardState extends State<ProductCard> {
                       }
                     },
                   );
+                  */
                 },
               ),
             ),

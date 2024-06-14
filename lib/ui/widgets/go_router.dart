@@ -9,6 +9,7 @@ import '../categories/subcategories_screen.dart';
 import '../categories/categories_screen.dart';
 import '../products/products_screen.dart';
 import '../home/home_screen.dart';
+import '../search/serch_screen.dart';
 import 'bottom_nav_bar.dart';
 
 final GoRouter router = GoRouter(
@@ -64,6 +65,11 @@ final GoRouter router = GoRouter(
           path: '/account',
           builder: (context, state) => const AccountScreen(),
           pageBuilder: (context, state) => const NoTransitionPage<void>(child: AccountScreen()),
+        ),
+        GoRoute(
+          path: '/search',
+          builder: (context, state) => const SearchScreen(),
+          pageBuilder: (context, state) => const NoTransitionPage<void>(child: SearchScreen()),
         ),
       ],
     ),

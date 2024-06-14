@@ -1,4 +1,4 @@
 
 
 
-const String secretJWT = 'secret270586';
+const String secretJWT = 'key';

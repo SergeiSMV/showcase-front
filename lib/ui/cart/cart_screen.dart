@@ -6,6 +6,7 @@ import 'package:showcase_front/constants/fonts.dart';
 import 'package:showcase_front/data/models/cart_model/cart_model.dart';
 
 import '../../data/providers.dart';
+import '../../data/repositories/backend_implements.dart';
 import '../widgets/loading.dart';
 import 'cart_views.dart';
 
@@ -19,6 +20,7 @@ class CartScreen extends ConsumerStatefulWidget {
 }
 
 class _CartScreenState extends ConsumerState<CartScreen> {
+  final BackendImplements backend = BackendImplements();
 
   @override
   Widget build(BuildContext context) {
@@ -100,8 +102,10 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          onPressed: () {
-                            
+                          onPressed: () async {
+                            await backend.newRequests().then(
+                              (_) => ref.refresh(baseCartsProvider(clientID))
+                            );
                           }, 
                           child: Text('заказать', style: white(18),)
                         ),
