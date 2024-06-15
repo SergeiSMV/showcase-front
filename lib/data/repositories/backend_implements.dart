@@ -197,7 +197,15 @@ class BackendImplements extends BackendRepository{
     try {
       await dio.put('$serverURL$putNewRequests', options: Options(headers: {'Authorization': 'Bearer $token',}));
     } on DioException catch (e) {
-      GlobalScaffoldMessenger.instance.showSnackBar("Ошибка: ${e.message}", 'error');
+      if (e.response != null) {
+        if (e.response!.statusCode == 404) {
+          GlobalScaffoldMessenger.instance.showSnackBar("Ошибка: Заявка не может быть обработана! Недостаточно товара на складе!", 'error');
+        } else {
+          GlobalScaffoldMessenger.instance.showSnackBar("Ошибка: ${e.message}", 'error');
+        }
+      } else {
+        GlobalScaffoldMessenger.instance.showSnackBar("Ошибка: ${e.message}", 'error');
+      }
     }
 
   }

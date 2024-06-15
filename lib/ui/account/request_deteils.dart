@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:showcase_front/constants/fonts.dart';
 
+import '../../data/models/cart_model/cart_model.dart';
 import '../../data/providers.dart';
 import '../widgets/loading.dart';
 
@@ -48,6 +49,7 @@ requestDetail(BuildContext mainContext, int requestID, List products){
                   shrinkWrap: true,
                   itemCount: products.length,
                   itemBuilder: (BuildContext context, int index){
+                    CartModel product = CartModel(cart: products[index]);
                     return Container(
                       margin: const EdgeInsets.symmetric(vertical: 3),
                       padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -76,11 +78,12 @@ requestDetail(BuildContext mainContext, int requestID, List products){
                           children: [
                             Padding(
                               padding: const EdgeInsets.only(right: 5),
-                              child: Text(products[index]['product_name'], style: darkCategory(16, FontWeight.w500), overflow: TextOverflow.clip,),
+                              child: Text(product.name, style: darkCategory(16, FontWeight.w500), overflow: TextOverflow.clip,),
                             ),
                             const SizedBox(height: 5,),
-                            Text('цена: ${products[index]['price']}₽', style: darkCategory(16, FontWeight.normal), overflow: TextOverflow.clip,),
-                            Text('количество: ${products[index]['quantity']}', style: darkCategory(16, FontWeight.normal), overflow: TextOverflow.clip,),
+                            getPrice(product.basePrice, product.price),
+                            Text('товара в заявке: ${products[index]['wanted_quantity']}', style: darkProduct(16, FontWeight.normal), overflow: TextOverflow.clip,),
+                            Text('товара к отгрузке: ${product.quantity}', style: darkProduct(16, FontWeight.normal), overflow: TextOverflow.clip,),
                             const SizedBox(height: 5,),
                             Row(
                               children: [

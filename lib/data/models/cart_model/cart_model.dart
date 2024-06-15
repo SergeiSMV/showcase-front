@@ -19,7 +19,6 @@ class CartModel with _$CartModel {
   double get totalPrice => cart['total'];
   List get pictures => cart['pictures'] ?? [];
   int get quantity => cart['quantity'];
-  // double get basePrice => cart['base_price'];
   int get id => cart['product_id'];
   String get name => cart['product_name'];
 

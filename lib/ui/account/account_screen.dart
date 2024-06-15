@@ -147,7 +147,6 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
               ),
             ],
           ),
-          // Text('id клиента:', style: darkCategory(16, FontWeight.normal), overflow: TextOverflow.clip,),
         ],
       )
     );

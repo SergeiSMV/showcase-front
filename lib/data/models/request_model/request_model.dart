@@ -32,9 +32,10 @@ String formatDate(String originalDateString) {
 
 
 String totalPrice(List products){
-  double totalSum = 0;
-  for (var product in products) {
-    totalSum += product['total'];
-  }
-  return totalSum.toString();
+  int sum = 0;
+    for (var product in products) {
+      int productTotal = (product['total'] * 100).round();
+      sum += productTotal;
+    }
+    return '${sum / 100}';
 }
