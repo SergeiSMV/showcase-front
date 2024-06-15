@@ -120,7 +120,7 @@ class _GoodsViewsState extends ConsumerState<ProductsViews> {
                             Expanded(
                               child: InkWell(
                                 onTap: () => indicateQuantity(context, _quantityController, widget.currentProduct.name).then((_) async {
-                                  await backend.putExact(clientID, widget.currentProduct.id, int.parse(_quantityController.text)).then(
+                                  await backend.putExact(widget.currentProduct.id, int.parse(_quantityController.text)).then(
                                     (updateCart) { 
                                       ref.read(cartBadgesProvider.notifier).state = updateCart.length;
                                       ref.read(cartProvider.notifier).state = updateCart;
@@ -163,14 +163,14 @@ class _GoodsViewsState extends ConsumerState<ProductsViews> {
         ),
         onPressed: () async { 
           operation == 'plus' ? 
-          await backend.putIncrement(clientID, widget.currentProduct.id).then(
+          await backend.putIncrement(widget.currentProduct.id).then(
             (updateCart) { 
               ref.read(cartBadgesProvider.notifier).state = updateCart.length;
               ref.read(cartProvider.notifier).state = updateCart;
             }
           )
           : 
-          await backend.putDecrement(clientID, widget.currentProduct.id, currentProductCartData(cart)['quantity']).then(
+          await backend.putDecrement(widget.currentProduct.id, currentProductCartData(cart)['quantity']).then(
             (updateCart) { 
               ref.read(cartBadgesProvider.notifier).state = updateCart.length;
               ref.read(cartProvider.notifier).state = updateCart;
@@ -199,7 +199,7 @@ class _GoodsViewsState extends ConsumerState<ProductsViews> {
           ),
           onPressed: () async {
             isAutgorized ? 
-            await backend.putIncrement(clientID, widget.currentProduct.id).then(
+            await backend.putIncrement(widget.currentProduct.id).then(
               (updateCart) { 
                 ref.read(cartBadgesProvider.notifier).state = updateCart.length;
                 ref.read(cartProvider.notifier).state = updateCart;

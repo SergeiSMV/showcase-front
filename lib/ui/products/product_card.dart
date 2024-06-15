@@ -8,7 +8,6 @@ import 'package:showcase_front/data/models/product_model/product_model.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../../data/models/category_model/category_data.dart';
-import '../../data/repositories/backend_implements.dart';
 
 
 

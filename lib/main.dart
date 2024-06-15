@@ -58,7 +58,7 @@ Future<void> isAutgorized(WidgetRef ref) async {
     final payload = jwt.payload;
     ref.read(isAutgorizedProvider.notifier).state = true;
     ref.read(clientIDProvider.notifier).state = payload['client_id'];
-    return ref.refresh(baseCartsProvider(payload['client_id']));
+    return ref.refresh(baseCartsProvider);
   }
   
 }

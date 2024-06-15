@@ -54,6 +54,7 @@ dependencies:
   flutter_hooks: ^0.20.5
   cached_network_image: ^3.3.1
   path_provider: ^2.1.3
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
@@ -119,6 +120,7 @@ flutter:
 
 # for actiavation rps 'dart pub global activate rps'
 # example 'rps build_freezed'
+#!!! flutter pub run build_runner build --delete-conflicting-outputs
 scripts:
   build_freezed: flutter pub run build_runner build --delete-conflicting-outputs
   build_riverpod: dart pub run build_runner build --delete-conflicting-outputs

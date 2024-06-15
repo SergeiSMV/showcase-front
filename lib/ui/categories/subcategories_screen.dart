@@ -63,7 +63,6 @@ class SubCategoriesScreen extends StatelessWidget {
   }
 
   Expanded subCategoriesViews() {
-    print(subCategories);
     return Expanded(
       child: ListView.builder(
         physics: const BouncingScrollPhysics(),

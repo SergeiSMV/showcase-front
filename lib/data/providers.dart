@@ -36,8 +36,8 @@ final baseProductsProvider = FutureProvider.autoDispose.family<List, int>((ref, 
 // провайдер корзины
 final cartProvider = StateProvider<List>((ref) => []);
 
-final baseCartsProvider = FutureProvider.autoDispose.family<List, int>((ref, clientID) async {
-  final result = await BackendImplements().backendGetCart(clientID);
+final baseCartsProvider = FutureProvider.autoDispose((ref) async {
+  final result = await BackendImplements().backendGetCart();
   ref.read(cartBadgesProvider.notifier).state = result.length;
   ref.read(cartProvider.notifier).state = result;
   return result;
@@ -46,8 +46,19 @@ final baseCartsProvider = FutureProvider.autoDispose.family<List, int>((ref, cli
 // провайдер заказов
 final requestsProvider = StateProvider<List>((ref) => []);
 
-final baseRequestsProvider = FutureProvider.autoDispose.family<List, int>((ref, clientID) async {
-  final result = await BackendImplements().backendGetRequests(clientID);
+final baseRequestsProvider = FutureProvider.autoDispose((ref) async {
+  final result = await BackendImplements().backendGetRequests();
   ref.read(requestsProvider.notifier).state = result;
+  return result;
+});
+
+
+// провайдер деталей заказа
+final requestDetailProvider = StateProvider<List>((ref) => []);
+
+// провайдер запроса деталей заказа
+final getRequestDetailProvider = FutureProvider.autoDispose.family<List, int>((ref, requestID) async {
+  final result = await BackendImplements().getRequestsID(requestID);
+  ref.read(requestDetailProvider.notifier).state = result;
   return result;
 });

@@ -1,5 +1,4 @@
 
-import 'package:flutter/material.dart';
 import 'package:showcase_front/data/repositories/hive_implements.dart';
 
 import '../../constants/server_config.dart';
@@ -7,7 +6,6 @@ import '../../domain/repositories/backend_repository.dart';
 import 'package:dio/dio.dart';
 
 import '../../ui/widgets/scaffold_messenger.dart';
-import '../models/category_model/category_data.dart';
 
 
 
@@ -83,15 +81,14 @@ class BackendImplements extends BackendRepository{
   }
   
   @override
-  Future<List> backendGetCart(int clientID) async {
+  Future<List> backendGetCart() async {
     String getServerURL = await HiveImplements().getServerURL();
     String serverURL = getServerURL.isEmpty ? apiURL : getServerURL;
-    final Map data = {
-      "client_id": clientID,
-    };
     String token = await HiveImplements().getToken();
     try {
-      Response response = await dio.get('$serverURL$cart', data: data, options: Options(headers: {'Authorization': 'Bearer $token',}));
+      Response response = await dio.get(
+        '$serverURL$cart', options: Options(headers: {'Authorization': 'Bearer $token',})
+      );
       return response.data ?? [];
     } on DioException catch (e) {
       GlobalScaffoldMessenger.instance.showSnackBar("Ошибка: ${e.message}", 'error');
@@ -113,12 +110,11 @@ class BackendImplements extends BackendRepository{
   }
 
   @override
-  Future<List> putIncrement(int clientID, int productID) async {
+  Future<List> putIncrement(int productID) async {
     String token = await HiveImplements().getToken();
     String getServerURL = await HiveImplements().getServerURL();
     String serverURL = getServerURL.isEmpty ? apiURL : getServerURL;
     Map putData = {
-      "client_id": clientID,
       "product_id": productID,
       "quantity_incr": 1,
       "quantity_exact": null
@@ -133,14 +129,13 @@ class BackendImplements extends BackendRepository{
   }
 
   @override
-  Future<List> putDecrement(int clientID, int productID, int cartQuantity) async {
+  Future<List> putDecrement(int productID, int cartQuantity) async {
     String token = await HiveImplements().getToken();
     String getServerURL = await HiveImplements().getServerURL();
     String serverURL = getServerURL.isEmpty ? apiURL : getServerURL;
     int? quantityExact = cartQuantity == 1 ? 0 : null;
     int? quantityIncr = cartQuantity == 1 ? null : -1;
     Map putData = {
-      "client_id": clientID,
       "product_id": productID,
       "quantity_incr": quantityIncr,
       "quantity_exact": quantityExact
@@ -155,12 +150,11 @@ class BackendImplements extends BackendRepository{
   }
 
   @override
-  Future<List> putDelete(int clientID, int productID) async {
+  Future<List> putDelete(int productID) async {
     String token = await HiveImplements().getToken();
     String getServerURL = await HiveImplements().getServerURL();
     String serverURL = getServerURL.isEmpty ? apiURL : getServerURL;
     Map putData = {
-      "client_id": clientID,
       "product_id": productID,
       "quantity_incr": null,
       "quantity_exact": 0
@@ -175,14 +169,13 @@ class BackendImplements extends BackendRepository{
   }
 
   @override
-  Future<List> putExact(int clientID, int productID, int exact) async {
+  Future<List> putExact(int productID, int exact) async {
     String token = await HiveImplements().getToken();
     String getServerURL = await HiveImplements().getServerURL();
     String serverURL = getServerURL.isEmpty ? apiURL : getServerURL;
     int? quantityExact = exact;
     int? quantityIncr;
     Map putData = {
-      "client_id": clientID,
       "product_id": productID,
       "quantity_incr": quantityIncr,
       "quantity_exact": quantityExact
@@ -225,12 +218,28 @@ class BackendImplements extends BackendRepository{
   }
 
   @override
-  Future<List> backendGetRequests(int clientID) async {
+  Future<List> backendGetRequests() async {
     String getServerURL = await HiveImplements().getServerURL();
     String serverURL = getServerURL.isEmpty ? apiURL : getServerURL;
     String token = await HiveImplements().getToken();
     try {
       Response response = await dio.get('$serverURL$getRequests', options: Options(headers: {'Authorization': 'Bearer $token',}));
+      return List.from(response.data);
+    } on DioException catch (e) {
+      GlobalScaffoldMessenger.instance.showSnackBar("Ошибка: ${e.message}", 'error');
+      return [];
+    }
+
+  }
+
+
+  @override
+  Future<List> getRequestsID(int requestID) async {
+    String getServerURL = await HiveImplements().getServerURL();
+    String serverURL = getServerURL.isEmpty ? apiURL : getServerURL;
+    String token = await HiveImplements().getToken();
+    try {
+      Response response = await dio.get('$serverURL$getRequests/$requestID', options: Options(headers: {'Authorization': 'Bearer $token',}));
       return List.from(response.data);
     } on DioException catch (e) {
       GlobalScaffoldMessenger.instance.showSnackBar("Ошибка: ${e.message}", 'error');

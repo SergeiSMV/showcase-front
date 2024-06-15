@@ -62,7 +62,7 @@ class _AuthState extends ConsumerState<Auth> {
                       decoration: InputDecoration(
                         focusedBorder:OutlineInputBorder(
                           borderSide: const BorderSide(color: Colors.green, width: 2.0),
-                          borderRadius: BorderRadius.circular(25.0),
+                          borderRadius: BorderRadius.circular(5.0),
                         ),
                         hintStyle: grey(16),
                         hintText: 'id клиента',
@@ -93,7 +93,7 @@ class _AuthState extends ConsumerState<Auth> {
                       decoration: InputDecoration(
                         focusedBorder:OutlineInputBorder(
                           borderSide: const BorderSide(color: Colors.green, width: 2.0),
-                          borderRadius: BorderRadius.circular(25.0),
+                          borderRadius: BorderRadius.circular(5),
                         ),
                         hintStyle: grey(16),
                         hintText: 'пароль',

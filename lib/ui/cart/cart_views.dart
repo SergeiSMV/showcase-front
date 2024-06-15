@@ -15,8 +15,7 @@ import '../categories/indicate_quantity.dart';
 
 class CartViews extends ConsumerStatefulWidget {
   final CartModel cartProduct;
-  final int clientID;
-  const CartViews({super.key, required this.cartProduct, required this.clientID});
+  const CartViews({super.key, required this.cartProduct});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _CartViewsState();
@@ -96,7 +95,7 @@ class _CartViewsState extends ConsumerState<CartViews> {
                           padding: const EdgeInsets.symmetric(horizontal: 5),
                           child: InkWell(
                             onTap: () => indicateQuantity(context, _quantityController, widget.cartProduct.name).then((_) async {
-                              await backend.putExact(widget.clientID, widget.cartProduct.id, int.parse(_quantityController.text)).then(
+                              await backend.putExact(widget.cartProduct.id, int.parse(_quantityController.text)).then(
                                 (updateCart) { 
                                   ref.read(cartBadgesProvider.notifier).state = updateCart.length;
                                   ref.read(cartProvider.notifier).state = updateCart;
@@ -112,7 +111,7 @@ class _CartViewsState extends ConsumerState<CartViews> {
                         const Spacer(),
                         IconButton(
                           onPressed: () async { 
-                            await backend.putDelete(widget.clientID, widget.cartProduct.id).then(
+                            await backend.putDelete(widget.cartProduct.id).then(
                               (updateCart) { 
                                 ref.read(cartBadgesProvider.notifier).state = updateCart.length;
                                 ref.read(cartProvider.notifier).state = updateCart;
@@ -183,14 +182,14 @@ class _CartViewsState extends ConsumerState<CartViews> {
       child: IconButton(
         onPressed: () async {
           operation == 'plus' ? 
-          await backend.putIncrement(widget.clientID, widget.cartProduct.id).then(
+          await backend.putIncrement(widget.cartProduct.id).then(
             (updateCart) { 
               ref.read(cartBadgesProvider.notifier).state = updateCart.length;
               ref.read(cartProvider.notifier).state = updateCart;
             }
           ) 
           : 
-          await backend.putDecrement(widget.clientID, widget.cartProduct.id, widget.cartProduct.quantity).then(
+          await backend.putDecrement(widget.cartProduct.id, widget.cartProduct.quantity).then(
             (updateCart) { 
               ref.read(cartBadgesProvider.notifier).state = updateCart.length;
               ref.read(cartProvider.notifier).state = updateCart;

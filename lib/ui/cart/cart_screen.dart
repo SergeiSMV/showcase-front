@@ -58,7 +58,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
         
         Consumer(
           builder: (context, ref, child) {
-            return ref.watch(baseCartsProvider(clientID)).when(
+            return ref.watch(baseCartsProvider).when(
               loading: () => const Loading(),
               error: (error, _) => Center(child: Text(error.toString())),
               data: (_){
@@ -84,7 +84,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                         itemCount: ordersProduct.length,
                         itemBuilder: (BuildContext context, int index){
                           CartModel cartProduct = CartModel(cart: ordersProduct[index]);
-                          return CartViews(cartProduct: cartProduct, clientID: clientID,);
+                          return CartViews(cartProduct: cartProduct);
                         }
                       ),
                     ),
@@ -104,7 +104,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                           ),
                           onPressed: () async {
                             await backend.newRequests().then(
-                              (_) => ref.refresh(baseCartsProvider(clientID))
+                              (_) => ref.refresh(baseCartsProvider)
                             );
                           }, 
                           child: Text('заказать', style: white(18),)

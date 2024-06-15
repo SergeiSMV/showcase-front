@@ -56,7 +56,7 @@ class _GoodsScreenState extends ConsumerState<ProductsScreen> {
             onTap: (){
               GoRouter.of(context).push('/auth').then((clientID) {
                   return {ref.refresh(baseProductsProvider(widget.categoryID)),
-                    ref.refresh(baseCartsProvider(clientID as int))};
+                    ref.refresh(baseCartsProvider)};
                 }
               );
             },
