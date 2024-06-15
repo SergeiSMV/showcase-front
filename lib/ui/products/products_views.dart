@@ -6,6 +6,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../../constants/fonts.dart';
+import '../../constants/image_filter.dart';
 import '../../constants/server_config.dart';
 import '../../data/models/category_model/category_data.dart';
 import '../../data/models/product_model/product_model.dart';
@@ -97,12 +98,21 @@ class _GoodsViewsState extends ConsumerState<ProductsViews> {
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  productImages(),
+                  productImages(widget.currentProduct.quantity),
                   const SizedBox(height: 5,),
                   widget.currentProduct.pictures.isEmpty || widget.currentProduct.pictures.length == 1 ? const SizedBox(height: 8,) : imageIndicator(),
                   const SizedBox(height: 5,),
                   Expanded(child: Text(widget.currentProduct.name, style: darkProduct(16, FontWeight.w500), maxLines: 3, overflow: TextOverflow.fade,)),
                   const SizedBox(height: 10,),
+                  Align(alignment: Alignment.centerLeft, child: 
+                    Text(
+                      'остаток: ${widget.currentProduct.quantity.toString()}', 
+                      style: widget.currentProduct.quantity == 0 ? red(16, FontWeight.w500) : darkProduct(16, FontWeight.w500), 
+                      maxLines: 3, 
+                      overflow: TextOverflow.fade,
+                    )
+                  ),
+                  
                   Align(alignment: Alignment.centerLeft, child: getPrice(widget.currentProduct.basePrice, widget.currentProduct.clientPrice,)),
                   const SizedBox(height: 10,),
                   Consumer(
@@ -135,7 +145,7 @@ class _GoodsViewsState extends ConsumerState<ProductsViews> {
                             quantityControlButton('plus', clientID)
                           ],
                         )
-                        : toCartButton(clientID),
+                        : toCartButton(clientID, widget.currentProduct.quantity),
                       );
                     }
                   ),
@@ -185,19 +195,20 @@ class _GoodsViewsState extends ConsumerState<ProductsViews> {
     );
   }
 
-  Widget toCartButton(int clientID) {
+  Widget toCartButton(int clientID, int quantity) {
     return Consumer(
       builder: (context, ref, child) {
         bool isAutgorized = ref.watch(isAutgorizedProvider);
         return ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF00B737),
+            backgroundColor: quantity == 0 ? Colors.grey : const Color(0xFF00B737),
             foregroundColor: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),
           ),
           onPressed: () async {
+            quantity == 0 ? null :
             isAutgorized ? 
             await backend.putIncrement(widget.currentProduct.id).then(
               (updateCart) { 
@@ -213,7 +224,7 @@ class _GoodsViewsState extends ConsumerState<ProductsViews> {
     );
   }
 
-  Container productImages() {
+  Container productImages(int quantity) {
     return Container(
       width: double.infinity,
       height: 150,
@@ -227,9 +238,12 @@ class _GoodsViewsState extends ConsumerState<ProductsViews> {
         itemCount: widget.currentProduct.pictures.length,
         itemBuilder: (context, index) {
           String picURL = '$apiURL${widget.currentProduct.pictures[index]['picture_url']}';
-          return CachedNetworkImage(
-            imageUrl: picURL,
-            errorWidget: (context, url, error) => Align(alignment: Alignment.center, child: Opacity(opacity: 0.3, child: Image.asset(categoryImagePath['empty'], scale: 3))),
+          return ColorFiltered(
+            colorFilter: quantity == 0 ? greyFilter : opacityFilter,
+            child: CachedNetworkImage(
+              imageUrl: picURL,
+              errorWidget: (context, url, error) => Align(alignment: Alignment.center, child: Opacity(opacity: 0.3, child: Image.asset(categoryImagePath['empty'], scale: 3))),
+            ),
           );
           
           /*

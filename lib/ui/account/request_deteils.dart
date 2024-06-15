@@ -1,13 +1,10 @@
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:showcase_front/constants/fonts.dart';
 
 import '../../data/models/cart_model/cart_model.dart';
-import '../../data/providers.dart';
-import '../widgets/loading.dart';
 
 requestDetail(BuildContext mainContext, int requestID, List products){
   return showModalBottomSheet(

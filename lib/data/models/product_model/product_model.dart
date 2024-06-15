@@ -23,5 +23,6 @@ class ProductModel with _$ProductModel {
   int get quantity => product['quantity'];
   double get basePrice => product['price']['base_price'] ?? 0;
   double get clientPrice => product['price']['price'];
+  int get quantyty => product['quantity'];
 
 }

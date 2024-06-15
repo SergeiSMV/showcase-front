@@ -155,7 +155,8 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                     children: [
                       FittedBox(
                         fit: BoxFit.cover,
-                        child: CachedNetworkImage(
+                        child: category.thumbnail == categoryImagePath['empty'] ? SizedBox(width: 180, height: 180, child: Image.asset(categoryImagePath['empty'], scale: 3)) :
+                        CachedNetworkImage(
                           imageUrl: '$apiURL${category.thumbnail}',
                           errorWidget: (context, url, error) => SizedBox(
                             width: 180,
