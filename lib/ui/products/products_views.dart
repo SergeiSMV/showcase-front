@@ -102,18 +102,19 @@ class _GoodsViewsState extends ConsumerState<ProductsViews> {
                   const SizedBox(height: 5,),
                   widget.currentProduct.pictures.isEmpty || widget.currentProduct.pictures.length == 1 ? const SizedBox(height: 8,) : imageIndicator(),
                   const SizedBox(height: 5,),
-                  Expanded(child: Text(widget.currentProduct.name, style: darkProduct(16, FontWeight.w500), maxLines: 3, overflow: TextOverflow.fade,)),
-                  const SizedBox(height: 10,),
+                  // Expanded(child: Text(widget.currentProduct.name, style: darkProduct(14, FontWeight.w500), maxLines: 3, overflow: TextOverflow.ellipsis,)),
+                  Text(widget.currentProduct.shortName, style: darkProduct(16, FontWeight.w500), maxLines: 3, overflow: TextOverflow.ellipsis,),
+                  const SizedBox(height: 5,),
                   Align(alignment: Alignment.centerLeft, child: 
                     Text(
                       'остаток: ${widget.currentProduct.quantity.toString()}', 
-                      style: widget.currentProduct.quantity == 0 ? red(16, FontWeight.w500) : darkProduct(16, FontWeight.w500), 
+                      style: widget.currentProduct.quantity == 0 ? red(16, FontWeight.w500) : darkCategory(16, FontWeight.w500), 
                       maxLines: 3, 
                       overflow: TextOverflow.fade,
                     )
                   ),
                   
-                  Align(alignment: Alignment.centerLeft, child: getPrice(widget.currentProduct.basePrice, widget.currentProduct.clientPrice,)),
+                  Expanded(child: Align(alignment: Alignment.centerLeft, child: getPrice(widget.currentProduct.basePrice, widget.currentProduct.clientPrice,))),
                   const SizedBox(height: 10,),
                   Consumer(
                     builder: (context, ref, child) {
@@ -227,7 +228,7 @@ class _GoodsViewsState extends ConsumerState<ProductsViews> {
   Container productImages(int quantity) {
     return Container(
       width: double.infinity,
-      height: 150,
+      height: 120,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         color: Colors.white,

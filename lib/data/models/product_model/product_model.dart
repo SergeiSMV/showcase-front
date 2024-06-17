@@ -17,6 +17,7 @@ class ProductModel with _$ProductModel {
   factory ProductModel.fromJson(Map<String, dynamic> json) => _$ProductModelFromJson(json);
 
   String get name => product['product_name'];
+  String get shortName => product['short_name'];
   int get id => product['product_id'];
   List get pictures => product['pictures'] ?? [];
   String get discription => product['product_description'];
