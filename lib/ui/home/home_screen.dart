@@ -46,7 +46,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         lastIndex == currenIndex ? null : ref.read(bottomNavIndexProvider.notifier).state = lastIndex : null;
       },
       child: Center(
-        child: Column(
+        child: Text('Home Screen', style: darkCategory(18),)
+        
+        
+        /*
+        Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Consumer(
@@ -91,6 +95,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             )
           ],
         ),
+        */
       ),
     );
   }

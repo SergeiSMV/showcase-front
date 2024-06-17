@@ -51,8 +51,7 @@ class App extends ConsumerWidget {
 Future<void> isAutgorized(WidgetRef ref) async {
   HiveImplements hive = HiveImplements();
   String token = await hive.getToken();
-  String server = await hive.getServerURL();
-  ref.read(serverURLProvider.notifier).state = server.isEmpty ? apiURL : server;
+  print('token: $token');
   if (token.isNotEmpty) {
     final jwt = JWT.verify(token, SecretKey(secretJWT));
     final payload = jwt.payload;

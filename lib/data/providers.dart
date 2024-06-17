@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'repositories/backend_implements.dart';
 
-final serverURLProvider = StateProvider<String>((ref) => '');
-
 // состояние индексов bottomNavigationBar
 final bottomNavIndexProvider = StateProvider<int>((ref) => 0);
 final lastIndexProvider = StateProvider<int>((ref) => 0);

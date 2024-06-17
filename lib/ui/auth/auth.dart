@@ -120,6 +120,8 @@ class _AuthState extends ConsumerState<Auth> {
                         final progress = ProgressHUD.of(context);
                         progress?.showWithText('авторизуемся');
                         await backend.authorization(_loginController.text, _passController.text).then((token) async {
+                          progress?.dismiss();
+                          token.isNotEmpty ?
                           await HiveImplements().saveToken(token).then((_) {
                             final jwt = JWT.verify(token, SecretKey(secretJWT));
                             final payload = jwt.payload;
@@ -127,7 +129,7 @@ class _AuthState extends ConsumerState<Auth> {
                             ref.read(clientIDProvider.notifier).state = payload['client_id'];
                             progress?.dismiss();
                             GoRouter.of(context).pop(payload['client_id']);
-                          });
+                          }) : null;
                         });
                       }, 
                       child: Text('авторизоваться', style: white(16),)
