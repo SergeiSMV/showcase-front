@@ -57,19 +57,20 @@ class BottomNavBar extends ConsumerWidget {
         ),
       ],
       onTabChange: (index) {
+        ref.read(lastIndexProvider.notifier).state = currentIndex;
         ref.read(bottomNavIndexProvider.notifier).state = index;
         switch (index) {
           case 0:
-            GoRouter.of(context).pushReplacement('/');
+            GoRouter.of(context).push('/');
             break;
           case 1:
-            GoRouter.of(context).pushReplacement('/categories');
+            GoRouter.of(context).push('/categories');
             break;
           case 2:
-            GoRouter.of(context).pushReplacement('/cart');
+            GoRouter.of(context).push('/cart');
             break;
           case 3:
-            GoRouter.of(context).pushReplacement('/account');
+            GoRouter.of(context).push('/account');
             break;
         }
       },

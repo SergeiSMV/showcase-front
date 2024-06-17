@@ -38,9 +38,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
+    return PopScope(
+      onPopInvoked: (result){
+        int lastIndex = ref.read(lastIndexProvider);
+        int currenIndex = ref.read(bottomNavIndexProvider);
+        result ?
+        lastIndex == currenIndex ? null : ref.read(bottomNavIndexProvider.notifier).state = lastIndex : null;
+      },
+      child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

@@ -1,8 +1,7 @@
 
-
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
@@ -11,14 +10,39 @@ import '../../constants/server_config.dart';
 import '../../data/models/category_model/category_data.dart';
 import '../../data/models/category_model/category_model.dart';
 
-class SubCategoriesScreen extends StatelessWidget {
+class SubCategoriesScreen extends ConsumerStatefulWidget {
   final List subCategories;
   final String mainCategory;
   final int mainCategoryID;
   const SubCategoriesScreen({super.key, required this.subCategories, required this.mainCategory, required this.mainCategoryID});
 
   @override
+  ConsumerState<SubCategoriesScreen> createState() => _SubCategoriesScreenState();
+}
+
+class _SubCategoriesScreenState extends ConsumerState<SubCategoriesScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+    /*
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final GoRouter route = GoRouter.of(context);
+      final RouteMatch lastMatch = route.routerDelegate.currentConfiguration.last;
+      final RouteMatchList matchList = lastMatch is ImperativeRouteMatch ? lastMatch.matches : route.routerDelegate.currentConfiguration;
+      final String path = matchList.uri.toString();
+      final extra = matchList.extra as Map<String, dynamic>?;
+      ref.read(categoryGoRouterProvider.notifier).state = {'path': path, 'extra': extra};
+    });
+    */
+  }
+
+
+  @override
   Widget build(BuildContext context) {
+
+    
+
     return SizedBox(
       // decoration: BoxDecoration(
       //   image: DecorationImage(
@@ -57,7 +81,7 @@ class SubCategoriesScreen extends StatelessWidget {
           child: Icon(MdiIcons.chevronLeft, size: 35,)
         ),
         const SizedBox(width: 5,),
-        Expanded(child: Text(mainCategory, style: darkCategory(26, FontWeight.bold), overflow: TextOverflow.clip,)),
+        Expanded(child: Text(widget.mainCategory, style: darkCategory(26, FontWeight.bold), overflow: TextOverflow.clip,)),
       ],
     );
   }
@@ -67,27 +91,28 @@ class SubCategoriesScreen extends StatelessWidget {
       child: ListView.builder(
         physics: const BouncingScrollPhysics(),
         shrinkWrap: true,
-        itemCount: subCategories.length,
+        itemCount: widget.subCategories.length,
         itemBuilder: (BuildContext context, int index){
-          CategoryModel category = CategoryModel(categories: subCategories[index]);
+          CategoryModel category = CategoryModel(categories: widget.subCategories[index]);
           return InkWell(
             onTap: (){ 
               category.children.isEmpty ?
               GoRouter.of(context).push(
-                '/products',
+                '/categories/${category.id}/products',
                 extra: {
                   'mainCategory': category.name,
                   'categoryID': category.id
                 },
               ) :
-              GoRouter.of(context).push(
+              {
+                GoRouter.of(context).push(
                 '/categories/${category.id}',
                 extra: {
                   'mainCategory': category.name,
                   'subCategories': category.children,
                   'mainCategoryID': category.id
-                },
-              );
+                })
+              };
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 3),
@@ -161,8 +186,8 @@ class SubCategoriesScreen extends StatelessWidget {
         GoRouter.of(context).push(
           '/products',
           extra: {
-            'mainCategory': mainCategory,
-            'categoryID': mainCategoryID
+            'mainCategory': widget.mainCategory,
+            'categoryID': widget.mainCategoryID
           },
         );
       },

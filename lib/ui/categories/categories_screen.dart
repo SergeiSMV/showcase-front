@@ -31,17 +31,25 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 5),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(height: 20,),
-            header(),
-            const SizedBox(height: 10,),
-            categoryViews(),
-          ],
+    return PopScope(
+      onPopInvoked: (result){
+        int lastIndex = ref.read(lastIndexProvider);
+        int currenIndex = ref.read(bottomNavIndexProvider);
+        result ?
+        lastIndex == currenIndex ? null : ref.read(bottomNavIndexProvider.notifier).state = lastIndex : null;
+      },
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 5),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 20,),
+              header(),
+              const SizedBox(height: 10,),
+              categoryViews(),
+            ],
+          ),
         ),
       ),
     );
@@ -125,7 +133,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                     'mainCategory': category.name,
                     'categoryID': category.id
                   },
-                ) :
+                ) : 
                 GoRouter.of(context).push(
                   '/categories/${category.id}',
                   extra: {

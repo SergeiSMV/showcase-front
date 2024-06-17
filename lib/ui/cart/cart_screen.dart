@@ -27,95 +27,103 @@ class _CartScreenState extends ConsumerState<CartScreen> {
 
     final int clientID = ref.watch(clientIDProvider);
 
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-        child: 
-        
-        clientID == 0 ?
-        Padding(
-          padding: const EdgeInsets.only(bottom: 20),
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: SizedBox(
-              width: 300,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF00B737),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+    return PopScope(
+      onPopInvoked: (result){
+        int lastIndex = ref.read(lastIndexProvider);
+        int currenIndex = ref.read(bottomNavIndexProvider);
+        result ?
+        lastIndex == currenIndex ? null : ref.read(bottomNavIndexProvider.notifier).state = lastIndex : null;
+      },
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+          child: 
+          
+          clientID == 0 ?
+          Padding(
+            padding: const EdgeInsets.only(bottom: 20),
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: SizedBox(
+                width: 300,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF00B737),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
+                  onPressed: () { 
+                    GoRouter.of(context).push('/auth');
+                  }, 
+                  child: Text('авторизоваться', style: white(16),)
                 ),
-                onPressed: () { 
-                  GoRouter.of(context).push('/auth');
-                }, 
-                child: Text('авторизоваться', style: white(16),)
               ),
             ),
-          ),
-        ) :
-        
-        Consumer(
-          builder: (context, ref, child) {
-            return ref.watch(baseCartsProvider).when(
-              loading: () => const Loading(),
-              error: (error, _) => Center(child: Text(error.toString())),
-              data: (_){
-
-                final ordersProduct = ref.watch(cartProvider);
-                
-                return ordersProduct.isEmpty ? emptyCart():
-                Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Align(
-                      alignment: Alignment.centerLeft, 
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 7),
-                        child: Text('Корзина', style: black(30, FontWeight.bold), overflow: TextOverflow.clip,),
-                      )
-                    ),
-                    Expanded(
-                      child: ordersProduct.isEmpty ? emptyCart():
-                      ListView.builder(
-                        physics: const BouncingScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: ordersProduct.length,
-                        itemBuilder: (BuildContext context, int index){
-                          CartModel cartProduct = CartModel(cart: ordersProduct[index]);
-                          return CartViews(cartProduct: cartProduct);
-                        }
+          ) :
+          
+          Consumer(
+            builder: (context, ref, child) {
+              return ref.watch(baseCartsProvider).when(
+                loading: () => const Loading(),
+                error: (error, _) => Center(child: Text(error.toString())),
+                data: (_){
+      
+                  final ordersProduct = ref.watch(cartProvider);
+                  
+                  return ordersProduct.isEmpty ? emptyCart():
+                  Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft, 
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 7),
+                          child: Text('Корзина', style: black(30, FontWeight.bold), overflow: TextOverflow.clip,),
+                        )
                       ),
-                    ),
-                    const Divider(indent: 10, endIndent: 10,),
-                    totalPrice(ordersProduct),
-                    SizedBox(
-                      width: double.infinity,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF00B737),
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          onPressed: () async {
-                            await backend.newRequests().then(
-                              (_) => ref.refresh(baseCartsProvider)
-                            );
-                          }, 
-                          child: Text('заказать', style: white(18),)
+                      Expanded(
+                        child: ordersProduct.isEmpty ? emptyCart():
+                        ListView.builder(
+                          physics: const BouncingScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: ordersProduct.length,
+                          itemBuilder: (BuildContext context, int index){
+                            CartModel cartProduct = CartModel(cart: ordersProduct[index]);
+                            return CartViews(cartProduct: cartProduct);
+                          }
                         ),
                       ),
-                    )
-                  ],
-                );
-              },
-            );
-          }
+                      const Divider(indent: 10, endIndent: 10,),
+                      totalPrice(ordersProduct),
+                      SizedBox(
+                        width: double.infinity,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF00B737),
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            onPressed: () async {
+                              await backend.newRequests().then(
+                                (_) => ref.refresh(baseCartsProvider)
+                              );
+                            }, 
+                            child: Text('заказать', style: white(18),)
+                          ),
+                        ),
+                      )
+                    ],
+                  );
+                },
+              );
+            }
+          ),
         ),
       ),
     );

@@ -35,27 +35,32 @@ final GoRouter router = GoRouter(
           path: '/categories',
           builder: (context, state) => const CategoriesScreen(),
           pageBuilder: (context, state) => const NoTransitionPage<void>(child: CategoriesScreen()),
+          routes: [
+            GoRoute(
+              path: ':categoryId',
+              pageBuilder: (context, state) {
+                int.parse(state.pathParameters['categoryId']!);
+                final extra = state.extra as Map<String, dynamic>;
+                final mainCategory = extra['mainCategory'] as String;
+                final subCategories = extra['subCategories'] as List<dynamic>;
+                final mainCategoryID = extra['mainCategoryID'] as int;
+                return NoTransitionPage<void>(child: SubCategoriesScreen(subCategories: subCategories, mainCategory: mainCategory, mainCategoryID: mainCategoryID,));
+              },
+              routes: [
+                GoRoute(
+                  path: 'products',
+                  pageBuilder: (context, state) {
+                    final extra = state.extra as Map<String, dynamic>;
+                    final mainCategory = extra['mainCategory'] as String;
+                    final categoryID = extra['categoryID'] as int;
+                    return NoTransitionPage<void>(child: ProductsScreen(categoryID: categoryID, mainCategory: mainCategory,));
+                  },
+                ),
+              ]
+            ),
+          ]
         ),
-        GoRoute(
-          path: '/categories/:categoryId',
-          pageBuilder: (context, state) {
-            int.parse(state.pathParameters['categoryId']!);
-            final extra = state.extra as Map<String, dynamic>;
-            final mainCategory = extra['mainCategory'] as String;
-            final subCategories = extra['subCategories'] as List<dynamic>;
-            final mainCategoryID = extra['mainCategoryID'] as int;
-            return NoTransitionPage<void>(child: SubCategoriesScreen(subCategories: subCategories, mainCategory: mainCategory, mainCategoryID: mainCategoryID,));
-          },
-        ),
-        GoRoute(
-          path: '/products',
-          pageBuilder: (context, state) {
-            final extra = state.extra as Map<String, dynamic>;
-            final mainCategory = extra['mainCategory'] as String;
-            final categoryID = extra['categoryID'] as int;
-            return NoTransitionPage<void>(child: ProductsScreen(categoryID: categoryID, mainCategory: mainCategory,));
-          },
-        ),
+        
         GoRoute(
           path: '/cart',
           builder: (context, state) => const CartScreen(),
@@ -73,5 +78,5 @@ final GoRouter router = GoRouter(
         ),
       ],
     ),
-  ],
+  ], 
 );

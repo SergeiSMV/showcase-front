@@ -29,9 +29,14 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
 
     final int clientID = ref.watch(clientIDProvider);
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
+    return PopScope(
+      onPopInvoked: (result){
+        int lastIndex = ref.read(lastIndexProvider);
+        int currenIndex = ref.read(bottomNavIndexProvider);
+        result ?
+        lastIndex == currenIndex ? null : ref.read(bottomNavIndexProvider.notifier).state = lastIndex : null;
+      },
+      child: SafeArea(
         child: 
         clientID == 0 ? authButton(context) :
         
