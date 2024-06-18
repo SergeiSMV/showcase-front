@@ -30,7 +30,7 @@ requestDetail(BuildContext mainContext, RequestModel request){
               const SizedBox(height: 40,),
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
                 decoration: BoxDecoration(
                   borderRadius: const BorderRadius.only(topLeft: Radius.circular(5), bottomLeft: Radius.circular(5)),
                   gradient: LinearGradient(
@@ -66,10 +66,9 @@ requestDetail(BuildContext mainContext, RequestModel request){
                           Text(product.name, style: darkCategory(16, FontWeight.w500), overflow: TextOverflow.clip,),
                           const SizedBox(height: 5,),
                           getPrice(product.basePrice, product.price),
-                          // const SizedBox(height: 5,),
                           Row(
                             children: [
-                              Icon(MdiIcons.truckFast, size: 18, color: Colors.grey,),
+                              Icon(MdiIcons.packageVariantClosed, size: 18, color: Colors.grey,),
                               const SizedBox(width: 10,),
                               Text('заявка: ${request.productsDetails[index]['wanted_quantity']}', style: darkProduct(16, FontWeight.normal), overflow: TextOverflow.clip,),
                               Padding(

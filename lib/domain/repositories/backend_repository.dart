@@ -32,4 +32,10 @@ abstract class BackendRepository{
 
   Future<List> getRequestsID(int requestID);
 
+  Future<List> getClientAddress();
+
+  Future<List> patchClientAddress(int shipID, bool isDelete, bool isDefault);
+
+  Future<List> addClientAddress(String address);
+
 }

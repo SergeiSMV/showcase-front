@@ -60,3 +60,17 @@ final getRequestDetailProvider = FutureProvider.autoDispose.family<List, int>((r
   ref.read(requestDetailProvider.notifier).state = result;
   return result;
 });
+
+
+// провайдер адресов клиента
+final addressProvider = StateProvider<List>((ref) => []);
+
+// адрес по-умолчанию
+final defaultAddressProvider = StateProvider<int>((ref) => 0);
+
+// провайдер запроса адресов клиента
+final getAddressProvider = FutureProvider.autoDispose((ref) async {
+  final result = await BackendImplements().getClientAddress();
+  ref.read(addressProvider.notifier).state = result;
+  return result;
+});

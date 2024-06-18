@@ -26,7 +26,7 @@ class BackendImplements extends BackendRepository{
   @override
   Future<List> backendCategories() async {
     try {
-      Response response = await dio.get('$apiURL$getCategories');
+      Response response = await dio.get('$apiURL$getBackCategories');
       return response.data ?? [];
     } on DioException catch (e) {
       GlobalScaffoldMessenger.instance.showSnackBar("Ошибка: ${e.message}", 'error');
@@ -38,8 +38,8 @@ class BackendImplements extends BackendRepository{
   Future<List> backendProducts(int categoryID) async {
     String token = await HiveImplements().getToken();
     try {
-      Response response = token.isEmpty ? await dio.get('$apiURL$getProducts/$categoryID') :
-      await dio.get('$apiURL$getProducts/$categoryID', options: Options(headers: {'Authorization': 'Bearer $token',}));
+      Response response = token.isEmpty ? await dio.get('$apiURL$getBackProducts/$categoryID') :
+      await dio.get('$apiURL$getBackProducts/$categoryID', options: Options(headers: {'Authorization': 'Bearer $token',}));
       return response.data ?? [];
     } on DioException catch (e) {
       GlobalScaffoldMessenger.instance.showSnackBar("Ошибка: ${e.message}", 'error');
@@ -186,7 +186,7 @@ class BackendImplements extends BackendRepository{
   Future<void> newRequests() async {
     String token = await HiveImplements().getToken();
     try {
-      await dio.put('$apiURL$putNewRequests', options: Options(headers: {'Authorization': 'Bearer $token',}));
+      await dio.put('$apiURL$putBackNewRequests', options: Options(headers: {'Authorization': 'Bearer $token',}));
     } on DioException catch (e) {
       if (e.response != null) {
         if (e.response!.statusCode == 404) {
@@ -206,7 +206,7 @@ class BackendImplements extends BackendRepository{
   Future<List> searchProduct(String keywords) async {
     String token = await HiveImplements().getToken();
     try {
-      Response result = await dio.get('$apiURL$getSearchProduct/$keywords', options: Options(headers: {'Authorization': 'Bearer $token',}));
+      Response result = await dio.get('$apiURL$getBackSearchProduct/$keywords', options: Options(headers: {'Authorization': 'Bearer $token',}));
       return List.from(result.data);
     } on DioException catch (_) {
       // GlobalScaffoldMessenger.instance.showSnackBar("Ошибка: ${e.message}", 'error');
@@ -218,7 +218,7 @@ class BackendImplements extends BackendRepository{
   Future<List> searchProductByCategory(int categoryID, String keywords) async {
     String token = await HiveImplements().getToken();
     try {
-      Response result = await dio.get('$apiURL$getSearchByCategory/$categoryID/$keywords', options: Options(headers: {'Authorization': 'Bearer $token',}));
+      Response result = await dio.get('$apiURL$getBackSearchByCategory/$categoryID/$keywords', options: Options(headers: {'Authorization': 'Bearer $token',}));
       return List.from(result.data);
     } on DioException catch (_) {
       // GlobalScaffoldMessenger.instance.showSnackBar("Ошибка: ${e.message}", 'error');
@@ -230,7 +230,7 @@ class BackendImplements extends BackendRepository{
   Future<List> backendGetRequests() async {
     String token = await HiveImplements().getToken();
     try {
-      Response response = await dio.get('$apiURL$getRequests', options: Options(headers: {'Authorization': 'Bearer $token',}));
+      Response response = await dio.get('$apiURL$getBackRequests', options: Options(headers: {'Authorization': 'Bearer $token',}));
       return List.from(response.data);
     } on DioException catch (e) {
       GlobalScaffoldMessenger.instance.showSnackBar("Ошибка: ${e.message}", 'error');
@@ -244,7 +244,7 @@ class BackendImplements extends BackendRepository{
   Future<List> getRequestsID(int requestID) async {
     String token = await HiveImplements().getToken();
     try {
-      Response response = await dio.get('$apiURL$getRequests/$requestID', options: Options(headers: {'Authorization': 'Bearer $token',}));
+      Response response = await dio.get('$apiURL$getBackRequests/$requestID', options: Options(headers: {'Authorization': 'Bearer $token',}));
       return List.from(response.data);
     } on DioException catch (e) {
       GlobalScaffoldMessenger.instance.showSnackBar("Ошибка: ${e.message}", 'error');
@@ -253,6 +253,49 @@ class BackendImplements extends BackendRepository{
 
   }
 
+  @override
+  Future<List> getClientAddress() async {
+    String token = await HiveImplements().getToken();
+    try {
+      Response response = await dio.get('$apiURL$backClientAddress', options: Options(headers: {'Authorization': 'Bearer $token',}));
+      return List.from(response.data);
+    } on DioException catch (e) {
+      GlobalScaffoldMessenger.instance.showSnackBar("Ошибка: ${e.message}", 'error');
+      return [];
+    }
+  }
+
+  @override
+  Future<List> patchClientAddress(int shipID, bool isDelete, bool isDefault) async {
+    String token = await HiveImplements().getToken();
+    Map putData = {
+      "ship_to_id": shipID,
+      "delete": isDelete,
+      "default": isDefault
+    };
+    try {
+      Response response = await dio.patch('$apiURL$backClientAddress', data: putData, options: Options(headers: {'Authorization': 'Bearer $token',}));
+      return List.from(response.data);
+    } on DioException catch (e) {
+      GlobalScaffoldMessenger.instance.showSnackBar("Ошибка: ${e.message}", 'error');
+      return [];
+    }
+  }
+
+  @override
+  Future<List> addClientAddress(String address) async {
+    String token = await HiveImplements().getToken();
+    Map putData = {
+      "address": address
+    };
+    try {
+      Response response = await dio.put('$apiURL$backClientAddress', data: putData, options: Options(headers: {'Authorization': 'Bearer $token',}));
+      return List.from(response.data);
+    } on DioException catch (e) {
+      GlobalScaffoldMessenger.instance.showSnackBar("Ошибка: ${e.message}", 'error');
+      return [];
+    }
+  }
 
 
 }
