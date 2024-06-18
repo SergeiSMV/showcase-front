@@ -46,7 +46,23 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
             children: [
               header(),
               const SizedBox(height: 10,),
-              Align(alignment: Alignment.centerLeft, child: Text('Заказы:', style: darkCategory(24, FontWeight.bold),)),
+              Align(
+                alignment: Alignment.centerLeft, 
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.only(topLeft: Radius.circular(5), bottomLeft: Radius.circular(5)),
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.green.withOpacity(0.5),
+                        Colors.white
+                      ]
+                    )
+                  ),
+                  child: Text('заказы:', style: white(24, FontWeight.bold),)
+                )
+              ),
               const Divider(color: Colors.grey, indent: 0, endIndent: 5,),
               requestsViews()
             ],
@@ -74,7 +90,7 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
                   RequestModel request = RequestModel(request: allRequests[index]);
                   return InkWell(
                     onTap: (){
-                      requestDetail(context, request.id, request.productsDetails);
+                      requestDetail(context, request);
                     },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 3),
@@ -99,12 +115,24 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('заказ ${request.id}', style: darkCategory(18, FontWeight.w500), overflow: TextOverflow.clip,),
-                            const SizedBox(height: 3,),
-                            Text(request.created, style: darkCategory(16, FontWeight.normal), overflow: TextOverflow.clip,),
+                            Row(
+                              children: [
+                                Icon(MdiIcons.clipboardText, size: 18, color: Colors.grey,),
+                                const SizedBox(width: 5),
+                                Expanded(child: Text('${request.id} от ${request.created}', style: darkCategory(18, FontWeight.normal), overflow: TextOverflow.clip,)),
+                              ],
+                            ),
+                            const SizedBox(height: 5),
+                            Row(
+                              children: [
+                                Icon(MdiIcons.truckFast, size: 18, color: Colors.grey,),
+                                const SizedBox(width: 5),
+                                Text(request.shipAddress, style: darkProduct(16, FontWeight.normal), overflow: TextOverflow.clip,),
+                              ],
+                            ),
                             const SizedBox(height: 5,),
-                            Text('товаров: ${request.products}', style: darkCategory(16, FontWeight.normal), overflow: TextOverflow.clip,),
-                            Text('сумма: ${request.total}', style: darkCategory(16, FontWeight.normal), overflow: TextOverflow.clip,),
+                            Text('товаров: ${request.products}', style: darkProduct(16, FontWeight.normal), overflow: TextOverflow.clip,),
+                            Text('сумма: ${request.total}₽', style: darkProduct(16, FontWeight.w500), overflow: TextOverflow.clip,),
                           ],
                         ),
                       ),

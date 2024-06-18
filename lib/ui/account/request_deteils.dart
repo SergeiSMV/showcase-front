@@ -1,12 +1,12 @@
 
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:showcase_front/constants/fonts.dart';
 
 import '../../data/models/cart_model/cart_model.dart';
+import '../../data/models/request_model/request_model.dart';
 
-requestDetail(BuildContext mainContext, int requestID, List products){
+requestDetail(BuildContext mainContext, RequestModel request){
   return showModalBottomSheet(
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
@@ -25,29 +25,71 @@ requestDetail(BuildContext mainContext, int requestID, List products){
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 40,),
-              Row(
-                children: [
-                  InkWell(
-                    onTap: (){
-                      GoRouter.of(context).pop();
-                    }, 
-                    child: Icon(MdiIcons.chevronLeft, size: 30,)
-                  ),
-                  const SizedBox(width: 10,),
-                  Align(alignment: Alignment.centerLeft, child: Text('заказ $requestID', style: darkCategory(22, FontWeight.normal),)),
-                ],
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(5), bottomLeft: Radius.circular(5)),
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.green.withOpacity(0.5),
+                      Colors.white
+                    ]
+                  )
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('заказ ${request.id} от ${request.created}', style: darkCategory(18, FontWeight.normal),),
+                    const SizedBox(height: 3,),
+                    Text('доставка: ${request.shipAddress}', style: darkCategory(16, FontWeight.normal),),
+                  ],
+                ),
               ),
-              const SizedBox(height: 20,),
+              const SizedBox(height: 15,),
               Expanded(
                 child: ListView.builder(
                   physics: const BouncingScrollPhysics(),
                   shrinkWrap: true,
-                  itemCount: products.length,
+                  itemCount: request.productsDetails.length,
                   itemBuilder: (BuildContext context, int index){
-                    CartModel product = CartModel(cart: products[index]);
-                    return Container(
+                    CartModel product = CartModel(cart: request.productsDetails[index]);
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 3),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(product.name, style: darkCategory(16, FontWeight.w500), overflow: TextOverflow.clip,),
+                          const SizedBox(height: 5,),
+                          getPrice(product.basePrice, product.price),
+                          // const SizedBox(height: 5,),
+                          Row(
+                            children: [
+                              Icon(MdiIcons.truckFast, size: 18, color: Colors.grey,),
+                              const SizedBox(width: 10,),
+                              Text('заявка: ${request.productsDetails[index]['wanted_quantity']}', style: darkProduct(16, FontWeight.normal), overflow: TextOverflow.clip,),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 5),
+                                child: Icon(MdiIcons.arrowRight, size: 15, color: Colors.black,),
+                                // Text('>', style: darkProduct(16, FontWeight.normal), overflow: TextOverflow.clip,),
+                              ),
+                              Text('отгрузка: ${product.quantity}', style: darkProduct(16, FontWeight.normal), overflow: TextOverflow.clip,),
+                            ],
+                          ),
+                          
+                          const SizedBox(height: 10,),
+                          Text('итого: ${request.productsDetails[index]['total']}₽', style: black(16, FontWeight.w500), overflow: TextOverflow.clip,),
+
+                          const Divider(),
+                        ],
+                      ),
+                    );
+                    /*
+                    Container(
                       margin: const EdgeInsets.symmetric(vertical: 3),
                       padding: const EdgeInsets.symmetric(horizontal: 5),
                       decoration: BoxDecoration(
@@ -91,9 +133,12 @@ requestDetail(BuildContext mainContext, int requestID, List products){
                         ),
                       )
                     );
+                    */
                   }
                 ),
-              )
+              ),
+              totalPrice(request.productsDetails),
+              const SizedBox(height: 5,)
             ],
           ),
         ),
@@ -108,21 +153,37 @@ Widget getPrice(double basePrice, double clientPrice){
     if (basePrice > clientPrice){
       return Row(
         children: [
-          Text('цена: $clientPrice', style: darkCategory(16), overflow: TextOverflow.fade,),
-          Text('₽', style: grey(14), overflow: TextOverflow.fade,),
+          Icon(MdiIcons.bookmark, size: 20, color: Colors.grey,),
           const SizedBox(width: 10,),
-          Text('$basePrice', style: blackThroughPrice(16)),
-          Text('₽', style: grey(14), overflow: TextOverflow.fade,),
+          Text('$clientPrice₽', style: darkCategory(16), overflow: TextOverflow.fade,),
+          const SizedBox(width: 10,),
+          Text('$basePrice₽', style: blackThroughPrice(16)),
         ],
       );
     } else {
       return Row(
         children: [
-          Text('цена: $clientPrice', style: darkCategory(16)),
-          Text('₽', style: grey(14, FontWeight.normal), overflow: TextOverflow.fade,),
+          Icon(MdiIcons.bookmark, size: 18, color: Colors.grey,),
+          const SizedBox(width: 10,),
+          Text('$clientPrice₽', style: black(16)),
         ],
       );
     }
+  }
+
+  Widget totalPrice(List ordersProduct){
+    int sum = 0;
+    for (var product in ordersProduct) {
+      int productTotal = (product['total'] * 100).round();
+      sum += productTotal;
+    }
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 5),
+        child: Text('итого: ${sum / 100} ₽', style: darkProduct(24, FontWeight.w500),),
+      ),
+    );
   }
 
 

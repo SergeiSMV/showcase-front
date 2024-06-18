@@ -24,7 +24,6 @@ class _SubCategoriesScreenState extends ConsumerState<SubCategoriesScreen> {
 
   @override
   void initState() {
-    print(widget.mainCategoryID);
     super.initState();
     /*
     WidgetsBinding.instance.addPostFrameCallback((_) {

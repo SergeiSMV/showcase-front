@@ -20,6 +20,7 @@ class RequestModel with _$RequestModel {
   String get products => request['products'].length.toString();
   List get productsDetails => request['products'];
   String get total => totalPrice(request['products']);
+  String get shipAddress => request['ship_to_address'];
   int get id => request['order_request_id'];
 
 }
@@ -33,9 +34,9 @@ String formatDate(String originalDateString) {
 
 String totalPrice(List products){
   int sum = 0;
-    for (var product in products) {
-      int productTotal = (product['total'] * 100).round();
-      sum += productTotal;
-    }
-    return '${sum / 100}';
+  for (var product in products) {
+    int productTotal = (product['total'] * 100).round();
+    sum += productTotal;
+  }
+  return (sum / 100).toStringAsFixed(2);
 }

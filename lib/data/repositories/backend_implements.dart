@@ -216,7 +216,6 @@ class BackendImplements extends BackendRepository{
 
   @override
   Future<List> searchProductByCategory(int categoryID, String keywords) async {
-    print('categoryID search: $categoryID');
     String token = await HiveImplements().getToken();
     try {
       Response result = await dio.get('$apiURL$getSearchByCategory/$categoryID/$keywords', options: Options(headers: {'Authorization': 'Bearer $token',}));

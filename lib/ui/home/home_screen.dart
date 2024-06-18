@@ -3,11 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:showcase_front/constants/fonts.dart';
-import 'package:showcase_front/constants/server_config.dart';
 import 'package:showcase_front/data/repositories/hive_implements.dart';
 
 import '../../data/providers.dart';
-import 'change_server.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
