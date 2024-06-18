@@ -102,13 +102,12 @@ class _GoodsViewsState extends ConsumerState<ProductsViews> {
                   const SizedBox(height: 5,),
                   widget.currentProduct.pictures.isEmpty || widget.currentProduct.pictures.length == 1 ? const SizedBox(height: 8,) : imageIndicator(),
                   const SizedBox(height: 5,),
-                  // Expanded(child: Text(widget.currentProduct.name, style: darkProduct(14, FontWeight.w500), maxLines: 3, overflow: TextOverflow.ellipsis,)),
                   Text(widget.currentProduct.shortName, style: darkProduct(16, FontWeight.w500), maxLines: 3, overflow: TextOverflow.ellipsis,),
                   const SizedBox(height: 5,),
                   Align(alignment: Alignment.centerLeft, child: 
                     Text(
                       'остаток: ${widget.currentProduct.quantity.toString()}', 
-                      style: widget.currentProduct.quantity == 0 ? red(16, FontWeight.w500) : darkCategory(16, FontWeight.w500), 
+                      style: widget.currentProduct.quantity == 0 ? red(14, FontWeight.w500) : grey(14, FontWeight.w500), 
                       maxLines: 3, 
                       overflow: TextOverflow.fade,
                     )

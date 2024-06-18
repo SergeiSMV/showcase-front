@@ -24,6 +24,7 @@ class _SubCategoriesScreenState extends ConsumerState<SubCategoriesScreen> {
 
   @override
   void initState() {
+    print(widget.mainCategoryID);
     super.initState();
     /*
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -40,9 +41,6 @@ class _SubCategoriesScreenState extends ConsumerState<SubCategoriesScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-    
-
     return SizedBox(
       // decoration: BoxDecoration(
       //   image: DecorationImage(
@@ -61,7 +59,7 @@ class _SubCategoriesScreenState extends ConsumerState<SubCategoriesScreen> {
               const SizedBox(height: 20,),
               header(context),
               const SizedBox(height: 10,),
-              getAllProducts(context),
+              categoryMenu(context),
               const SizedBox(height: 10,),
               subCategoriesViews()
             ],
@@ -141,7 +139,6 @@ class _SubCategoriesScreenState extends ConsumerState<SubCategoriesScreen> {
                       margin: EdgeInsets.zero,
                       height: 100,
                       width: 100,
-                      // clipBehavior: Clip.hardEdge,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
                         color: Colors.white
@@ -180,57 +177,94 @@ class _SubCategoriesScreenState extends ConsumerState<SubCategoriesScreen> {
     );
   }
 
-  InkWell getAllProducts(BuildContext context) {
-    return InkWell(
-      onTap: (){
-        GoRouter.of(context).push(
-          '/products',
-          extra: {
-            'mainCategory': widget.mainCategory,
-            'categoryID': widget.mainCategoryID
-          },
-        );
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            width: 3,
-            color: Colors.transparent,
-          ),
-          color: Colors.green.shade100,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              spreadRadius: 1,
-              blurRadius: 1,
-              offset: const Offset(1, 1),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Container(
-              height: 60,
-              width: 100,
-              clipBehavior: Clip.hardEdge,
+  Widget categoryMenu(BuildContext context) {
+    return Row(
+      children: [
+        Flexible(
+          child: InkWell(
+            onTap: (){
+              GoRouter.of(context).push(
+                '/categories/${widget.mainCategoryID}/products',
+                extra: {
+                  'mainCategory': widget.mainCategory,
+                  'categoryID': widget.mainCategoryID
+                },
+              );
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 5),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                image: const DecorationImage(
-                  scale: 4,
-                  opacity: 1,
-                  image: AssetImage('lib/images/get_all.png'),
-                  fit: BoxFit.scaleDown,
+                border: Border.all(
+                  width: 3,
+                  color: Colors.transparent,
                 ),
+                color: Colors.green.shade100,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.4),
+                    spreadRadius: 1,
+                    blurRadius: 0.3,
+                    offset: const Offset(1, 2),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  const SizedBox(width: 5,),
+                  Image.asset('lib/images/get_all.png', scale: 7,),
+                  const SizedBox(width: 10,),
+                  Expanded(
+                    child: Text('товары в категории', style: black(14, FontWeight.w500), overflow: TextOverflow.clip,)
+                  )
+                ],
               ),
             ),
-            const SizedBox(width: 10,),
-            Expanded(
-              child: Text('Все товары в категории', style: black(20, FontWeight.w500), overflow: TextOverflow.clip,)
-            )
-          ],
+          ),
         ),
-      ),
+        const SizedBox(width: 5,),
+        Flexible(
+          child: InkWell(
+            onTap: (){
+              GoRouter.of(context).push(
+                '/search_by_id',
+                extra: {
+                  'mainCategory': widget.mainCategory,
+                  'categoryID': widget.mainCategoryID
+                },
+              );
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 5),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  width: 3,
+                  color: Colors.transparent,
+                ),
+                color: Colors.green.shade100,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.4),
+                    spreadRadius: 1,
+                    blurRadius: 0.3,
+                    offset: const Offset(1, 2),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Image.asset('lib/images/glass.png', scale: 6,),
+                  const SizedBox(width: 5,),
+                  Expanded(
+                    child: Text('поиск по категории', style: black(14, FontWeight.w500), overflow: TextOverflow.clip,)
+                  )
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

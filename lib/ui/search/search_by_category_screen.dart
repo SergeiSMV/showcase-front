@@ -1,4 +1,5 @@
 
+
 import 'dart:async';
 
 import 'package:dotlottie_loader/dotlottie_loader.dart';
@@ -11,14 +12,16 @@ import '../../data/models/product_model/product_model.dart';
 import '../../data/repositories/backend_implements.dart';
 import '../products/products_views.dart';
 
-class SearchScreen extends StatefulWidget {
-  const SearchScreen({super.key});
+class SearchByCategoryScreen extends StatefulWidget {
+  final String mainCategory;
+  final int mainCategoryID; 
+  const SearchByCategoryScreen({super.key, required this.mainCategory, required this.mainCategoryID});
 
   @override
-  State<SearchScreen> createState() => _SearchScreenState();
+  State<SearchByCategoryScreen> createState() => _SearchByCategoryScreenState();
 }
 
-class _SearchScreenState extends State<SearchScreen> {
+class _SearchByCategoryScreenState extends State<SearchByCategoryScreen> {
   final BackendImplements backend = BackendImplements();
   TextEditingController searchController = TextEditingController();
   Timer? _debounce;
@@ -39,7 +42,7 @@ class _SearchScreenState extends State<SearchScreen> {
         : 
         {
           setState(() { content = searchAnimation(); }),
-          await backend.searchProduct(searchController.text).then((value){
+          await backend.searchProductByCategory(widget.mainCategoryID, searchController.text).then((value){
             value.isEmpty ? setState(() { content = Center(child: Text('товар не найден', style: black(18),),); }) : setState(() { content = products(value); }) ;
           }),
         };
@@ -110,7 +113,7 @@ class _SearchScreenState extends State<SearchScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Поиск товара по всему каталогу', style: black(26, FontWeight.bold), overflow: TextOverflow.clip,),
+            Text('Поиск товара по категории ${widget.mainCategory}', style: black(26, FontWeight.bold), overflow: TextOverflow.clip,),
             // Text('по всему каталогу', style: black(25, FontWeight.bold), overflow: TextOverflow.clip,),
             Text('введите название товара в окно поиска', style: grey(14, FontWeight.normal), overflow: TextOverflow.clip,),
           ],

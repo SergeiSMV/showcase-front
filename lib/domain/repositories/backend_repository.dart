@@ -28,6 +28,8 @@ abstract class BackendRepository{
 
   Future<List> searchProduct(String keywords);
 
+  Future<List> searchProductByCategory(int categoryID, String keywords);
+
   Future<List> getRequestsID(int requestID);
 
 }

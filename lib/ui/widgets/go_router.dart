@@ -9,6 +9,7 @@ import '../categories/subcategories_screen.dart';
 import '../categories/categories_screen.dart';
 import '../products/products_screen.dart';
 import '../home/home_screen.dart';
+import '../search/search_by_category_screen.dart';
 import '../search/serch_screen.dart';
 import 'bottom_nav_bar.dart';
 
@@ -75,6 +76,16 @@ final GoRouter router = GoRouter(
           path: '/search',
           builder: (context, state) => const SearchScreen(),
           pageBuilder: (context, state) => const NoTransitionPage<void>(child: SearchScreen()),
+        ),
+        GoRoute(
+          path: '/search_by_id',
+          builder: (context, state) => const SearchScreen(),
+          pageBuilder: (context, state) {
+            final extra = state.extra as Map<String, dynamic>;
+            final mainCategory = extra['mainCategory'] as String;
+            final categoryID = extra['categoryID'] as int;
+            return NoTransitionPage<void>(child: SearchByCategoryScreen(mainCategory: mainCategory, mainCategoryID: categoryID,));
+          }
         ),
       ],
     ),

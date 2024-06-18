@@ -208,8 +208,21 @@ class BackendImplements extends BackendRepository{
     try {
       Response result = await dio.get('$apiURL$getSearchProduct/$keywords', options: Options(headers: {'Authorization': 'Bearer $token',}));
       return List.from(result.data);
-    } on DioException catch (e) {
-      GlobalScaffoldMessenger.instance.showSnackBar("Ошибка: ${e.message}", 'error');
+    } on DioException catch (_) {
+      // GlobalScaffoldMessenger.instance.showSnackBar("Ошибка: ${e.message}", 'error');
+      return [];
+    }
+  }
+
+  @override
+  Future<List> searchProductByCategory(int categoryID, String keywords) async {
+    print('categoryID search: $categoryID');
+    String token = await HiveImplements().getToken();
+    try {
+      Response result = await dio.get('$apiURL$getSearchByCategory/$categoryID/$keywords', options: Options(headers: {'Authorization': 'Bearer $token',}));
+      return List.from(result.data);
+    } on DioException catch (_) {
+      // GlobalScaffoldMessenger.instance.showSnackBar("Ошибка: ${e.message}", 'error');
       return [];
     }
   }
