@@ -65,9 +65,6 @@ final getRequestDetailProvider = FutureProvider.autoDispose.family<List, int>((r
 // провайдер адресов клиента
 final addressProvider = StateProvider<List>((ref) => []);
 
-// адрес по-умолчанию
-final defaultAddressProvider = StateProvider<int>((ref) => 0);
-
 // провайдер запроса адресов клиента
 final getAddressProvider = FutureProvider.autoDispose((ref) async {
   final result = await BackendImplements().getClientAddress();

@@ -149,7 +149,7 @@ class _ShipsViewState extends ConsumerState<ShipsView> with SingleTickerProvider
                     child: SizedBox(
                       child: Row(
                         children: [
-                          const SizedBox(width: 5,),
+                          const SizedBox(width: 6,),
                           Icon(MdiIcons.plusCircle, color: Colors.white, size: 20,),
                           const SizedBox(width: 5,),
                           Expanded(child: Text('добавить', style: white(14),))
@@ -203,7 +203,7 @@ class _ShipsViewState extends ConsumerState<ShipsView> with SingleTickerProvider
                                   ref.read(addressProvider.notifier).state = update.toList();
                                 });
                               },
-                              icon: Icon(MdiIcons.closeCircle, color: Colors.red, size: 20,)
+                              icon: Icon(MdiIcons.minusCircle, color: Colors.red, size: 20,)
                             ),
                           )
                         ],

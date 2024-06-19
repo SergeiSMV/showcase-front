@@ -183,10 +183,14 @@ class BackendImplements extends BackendRepository{
   }
   
   @override
-  Future<void> newRequests() async {
+  Future<void> newRequests(int shipID, String comment) async {
     String token = await HiveImplements().getToken();
+    Map putData = {
+      "ship_to_id": shipID,
+      "comment": comment,
+    };
     try {
-      await dio.put('$apiURL$putBackNewRequests', options: Options(headers: {'Authorization': 'Bearer $token',}));
+      await dio.put('$apiURL$putBackNewRequests', data: putData, options: Options(headers: {'Authorization': 'Bearer $token',}));
     } on DioException catch (e) {
       if (e.response != null) {
         if (e.response!.statusCode == 404) {

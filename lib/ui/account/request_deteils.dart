@@ -146,43 +146,41 @@ requestDetail(BuildContext mainContext, RequestModel request){
   );
 }
 
-
-
 Widget getPrice(double basePrice, double clientPrice){
-    if (basePrice > clientPrice){
-      return Row(
-        children: [
-          Icon(MdiIcons.bookmark, size: 20, color: Colors.grey,),
-          const SizedBox(width: 10,),
-          Text('$clientPrice₽', style: darkCategory(16), overflow: TextOverflow.fade,),
-          const SizedBox(width: 10,),
-          Text('$basePrice₽', style: blackThroughPrice(16)),
-        ],
-      );
-    } else {
-      return Row(
-        children: [
-          Icon(MdiIcons.bookmark, size: 18, color: Colors.grey,),
-          const SizedBox(width: 10,),
-          Text('$clientPrice₽', style: black(16)),
-        ],
-      );
-    }
-  }
-
-  Widget totalPrice(List ordersProduct){
-    int sum = 0;
-    for (var product in ordersProduct) {
-      int productTotal = (product['total'] * 100).round();
-      sum += productTotal;
-    }
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 5),
-        child: Text('итого: ${sum / 100} ₽', style: darkProduct(24, FontWeight.w500),),
-      ),
+  if (basePrice > clientPrice){
+    return Row(
+      children: [
+        Icon(MdiIcons.bookmark, size: 20, color: Colors.grey,),
+        const SizedBox(width: 10,),
+        Text('$clientPrice₽', style: darkCategory(16), overflow: TextOverflow.fade,),
+        const SizedBox(width: 10,),
+        Text('$basePrice₽', style: blackThroughPrice(16)),
+      ],
+    );
+  } else {
+    return Row(
+      children: [
+        Icon(MdiIcons.bookmark, size: 18, color: Colors.grey,),
+        const SizedBox(width: 10,),
+        Text('$clientPrice₽', style: black(16)),
+      ],
     );
   }
+}
+
+Widget totalPrice(List ordersProduct){
+  int sum = 0;
+  for (var product in ordersProduct) {
+    int productTotal = (product['total'] * 100).round();
+    sum += productTotal;
+  }
+  return Align(
+    alignment: Alignment.centerLeft,
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      child: Text('итого: ${sum / 100} ₽', style: darkProduct(24, FontWeight.w500),),
+    ),
+  );
+}
 
 

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../account/account_screen.dart';
 import '../auth/auth.dart';
+import '../cart/additional_info.dart';
 import '../cart/cart_screen.dart';
 import '../categories/subcategories_screen.dart';
 import '../categories/categories_screen.dart';
@@ -13,14 +14,21 @@ import '../search/search_by_category_screen.dart';
 import '../search/serch_screen.dart';
 import 'bottom_nav_bar.dart';
 
+final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> _shellNavigatorKey = GlobalKey<NavigatorState>();
+
 final GoRouter router = GoRouter(
+  navigatorKey: _rootNavigatorKey,
   initialLocation: '/',
   routes: <RouteBase>[
     ShellRoute(
-      builder: (context, state, child) => Scaffold(
-        body: child,
-        bottomNavigationBar: const BottomNavBar(),
-      ),
+      navigatorKey: _shellNavigatorKey,
+      builder: (context, state, child) {
+        return Scaffold(
+          body: child,
+          bottomNavigationBar: const BottomNavBar(),
+        );
+      },
       routes: [
         GoRoute(
           path: '/',
@@ -86,6 +94,11 @@ final GoRouter router = GoRouter(
             final categoryID = extra['categoryID'] as int;
             return NoTransitionPage<void>(child: SearchByCategoryScreen(mainCategory: mainCategory, mainCategoryID: categoryID,));
           }
+        ),
+        GoRoute(
+          path: '/additinal_info',
+          builder: (context, state) => const AdditionalInfo(),
+          pageBuilder: (context, state) => const NoTransitionPage<void>(child: AdditionalInfo()),
         ),
       ],
     ),

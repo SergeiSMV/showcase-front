@@ -69,8 +69,8 @@ class _AuthState extends ConsumerState<Auth> {
                         prefixIcon: const Icon(Icons.person, color: Colors.black,),
                         isCollapsed: true
                       ),
-                      onChanged: (_){ setState(() { }); },
-                      onSubmitted: (_) { setState(() { }); },
+                      onChanged: (_){ },
+                      onSubmitted: (_) { },
                     ),
                   ),
                   const SizedBox(height: 15,),
@@ -120,16 +120,15 @@ class _AuthState extends ConsumerState<Auth> {
                         final progress = ProgressHUD.of(context);
                         progress?.showWithText('авторизуемся');
                         await backend.authorization(_loginController.text, _passController.text).then((token) async {
-                          progress?.dismiss();
                           token.isNotEmpty ?
                           await HiveImplements().saveToken(token).then((_) {
                             final jwt = JWT.verify(token, SecretKey(secretJWT));
                             final payload = jwt.payload;
                             ref.read(isAutgorizedProvider.notifier).state = true;
                             ref.read(clientIDProvider.notifier).state = payload['client_id'];
-                            progress?.dismiss();
                             GoRouter.of(context).pop(payload['client_id']);
                           }) : null;
+                          progress?.dismiss();
                         });
                       }, 
                       child: Text('авторизоваться', style: white(16),)

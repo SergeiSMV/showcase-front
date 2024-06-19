@@ -24,7 +24,7 @@ abstract class BackendRepository{
 
   Future<List> backendGetRequests();
 
-  Future<void> newRequests();
+  Future<void> newRequests(int shipID, String comment);
 
   Future<List> searchProduct(String keywords);
 

@@ -22,6 +22,14 @@ class CartScreen extends ConsumerStatefulWidget {
 class _CartScreenState extends ConsumerState<CartScreen> {
   final BackendImplements backend = BackendImplements();
 
+  TextEditingController commentController = TextEditingController();
+
+  @override
+  void dispose(){
+    commentController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -72,8 +80,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
       
                   final ordersProduct = ref.watch(cartProvider);
                   
-                  return ordersProduct.isEmpty ? emptyCart():
-                  Column(
+                  return Column(
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       Align(
@@ -83,6 +90,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                           child: Text('Корзина', style: black(30, FontWeight.bold), overflow: TextOverflow.clip,),
                         )
                       ),
+                      const SizedBox(height: 5,),
                       Expanded(
                         child: ordersProduct.isEmpty ? emptyCart():
                         ListView.builder(
@@ -97,6 +105,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                       ),
                       const Divider(indent: 10, endIndent: 10,),
                       totalPrice(ordersProduct),
+                      ordersProduct.isEmpty ? const SizedBox.shrink() :
                       SizedBox(
                         width: double.infinity,
                         child: Padding(
@@ -110,9 +119,9 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                               ),
                             ),
                             onPressed: () async {
-                              await backend.newRequests().then(
-                                (_) => ref.refresh(baseCartsProvider)
-                              );
+                              await GoRouter.of(context).push('/additinal_info',).then((_){
+                                return {ref.refresh(baseCartsProvider), ref.refresh(baseRequestsProvider)};
+                              });
                             }, 
                             child: Text('заказать', style: white(18),)
                           ),
@@ -125,7 +134,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
             }
           ),
         ),
-      ),
+      )
     );
   }
 
@@ -134,9 +143,9 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Image.asset('lib/images/empty_cart.png', scale: 3),
-        const SizedBox(height: 15,),
-        Text('корзина пуста', style: black(18),)
+        Opacity(opacity: 0.7, child: Image.asset('lib/images/empty_cart.png', scale: 5)),
+        const SizedBox(height: 10,),
+        Text('в корзине пока\nпусто', style: black(14), textAlign: TextAlign.center,)
       ],
     );
   }
@@ -151,11 +160,9 @@ class _CartScreenState extends ConsumerState<CartScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: Row(
         children: [
-          Text('итого:', style: darkProduct(20),),
+          Text('итого:', style: darkProduct(18),),
           const SizedBox(width: 8,),
-          Text('${sum / 100}', style: darkProduct(24, FontWeight.bold),),
-          const SizedBox(width: 1,),
-          Text('₽', style: grey(20, FontWeight.normal), overflow: TextOverflow.fade,),
+          Text('${(sum / 100).toStringAsFixed(2)}₽', style: darkProduct(24, FontWeight.bold),),
         ],
       ),
     );

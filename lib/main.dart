@@ -10,6 +10,7 @@ import 'data/providers.dart';
 import 'ui/widgets/go_router.dart';
 import 'ui/widgets/scaffold_messenger.dart';
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
