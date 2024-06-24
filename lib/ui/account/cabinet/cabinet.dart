@@ -4,14 +4,15 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import '../../../constants/fonts.dart';
 import '../../../data/providers.dart';
 import '../../../data/repositories/hive_implements.dart';
 import '../../widgets/scaffold_messenger.dart';
+import '../responses_view.dart';
 import 'requests_view.dart';
-import 'ships_view.dart';
 
 class Cabinet extends ConsumerStatefulWidget {
   const Cabinet({super.key});
@@ -35,11 +36,9 @@ class _CabinetState extends ConsumerState<Cabinet> {
             const SizedBox(height: 15,),
             Expanded(
               child: ListView(
-                // physics: const NeverScrollableScrollPhysics(),
-                // mainAxisSize: MainAxisSize.min,
                 shrinkWrap: true,
                 children: const [
-                  ShipsView(),
+                  ResponsesView(),
                   SizedBox(height: 5,),
                   RequestsView(),
                   SizedBox(height: 5,),
@@ -58,6 +57,18 @@ class _CabinetState extends ConsumerState<Cabinet> {
       child: Row(
         children: [
           Expanded(child: Text('Клиент', style: darkCategory(30, FontWeight.bold), overflow: TextOverflow.clip,)),
+          InkWell(
+            onTap: (){
+              GoRouter.of(context).push('/addresses');
+            },
+            child: Column(
+              children: [
+                Icon(MdiIcons.mapMarker, size: 25, color: Colors.green,),
+                Align(alignment: Alignment.bottomCenter, child: Text('адреса', style: green(12),))
+              ],
+            ),
+          ),
+          const SizedBox(width: 15,),
           InkWell(
             onTap: (){
               PaintingBinding.instance.imageCache.clear();

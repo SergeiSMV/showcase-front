@@ -240,7 +240,6 @@ class BackendImplements extends BackendRepository{
       GlobalScaffoldMessenger.instance.showSnackBar("Ошибка: ${e.message}", 'error');
       return [];
     }
-
   }
 
 
@@ -254,8 +253,21 @@ class BackendImplements extends BackendRepository{
       GlobalScaffoldMessenger.instance.showSnackBar("Ошибка: ${e.message}", 'error');
       return [];
     }
-
   }
+
+
+  @override
+  Future<List> backendGetResponses() async {
+    String token = await HiveImplements().getToken();
+    try {
+      Response response = await dio.get('$apiURL$getBackResponses', options: Options(headers: {'Authorization': 'Bearer $token',}));
+      return List.from(response.data);
+    } on DioException catch (e) {
+      GlobalScaffoldMessenger.instance.showSnackBar("Ошибка: ${e.message}", 'error');
+      return [];
+    }
+  }
+
 
   @override
   Future<List> getClientAddress() async {

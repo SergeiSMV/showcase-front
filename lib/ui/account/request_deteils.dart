@@ -74,7 +74,6 @@ requestDetail(BuildContext mainContext, RequestModel request){
                               Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 5),
                                 child: Icon(MdiIcons.arrowRight, size: 15, color: Colors.black,),
-                                // Text('>', style: darkProduct(16, FontWeight.normal), overflow: TextOverflow.clip,),
                               ),
                               Text('отгрузка: ${product.quantity}', style: darkProduct(16, FontWeight.normal), overflow: TextOverflow.clip,),
                             ],
@@ -150,7 +149,7 @@ Widget getPrice(double basePrice, double clientPrice){
   if (basePrice > clientPrice){
     return Row(
       children: [
-        Icon(MdiIcons.bookmark, size: 20, color: Colors.grey,),
+        Icon(MdiIcons.bookmark, size: 18, color: Colors.grey,),
         const SizedBox(width: 10,),
         Text('$clientPrice₽', style: darkCategory(16), overflow: TextOverflow.fade,),
         const SizedBox(width: 10,),

@@ -62,6 +62,16 @@ final getRequestDetailProvider = FutureProvider.autoDispose.family<List, int>((r
 });
 
 
+// провайдер отгрузок
+final responsesProvider = StateProvider<List>((ref) => []);
+
+final baseResponsesProvider = FutureProvider.autoDispose((ref) async {
+  final result = await BackendImplements().backendGetResponses();
+  ref.read(responsesProvider.notifier).state = result;
+  return result;
+});
+
+
 // провайдер адресов клиента
 final addressProvider = StateProvider<List>((ref) => []);
 

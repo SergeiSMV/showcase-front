@@ -32,6 +32,8 @@ abstract class BackendRepository{
 
   Future<List> getRequestsID(int requestID);
 
+  Future<List> backendGetResponses();
+
   Future<List> getClientAddress();
 
   Future<List> patchClientAddress(int shipID, bool isDelete, bool isDefault);

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../account/account_screen.dart';
+import '../account/ships_view.dart';
 import '../auth/auth.dart';
 import '../cart/additional_info.dart';
 import '../cart/cart_screen.dart';
@@ -94,6 +95,11 @@ final GoRouter router = GoRouter(
             final categoryID = extra['categoryID'] as int;
             return NoTransitionPage<void>(child: SearchByCategoryScreen(mainCategory: mainCategory, mainCategoryID: categoryID,));
           }
+        ),
+        GoRoute(
+          path: '/addresses',
+          builder: (context, state) => const ShipsView(),
+          pageBuilder: (context, state) => const NoTransitionPage<void>(child: ShipsView()),
         ),
         GoRoute(
           path: '/additinal_info',
