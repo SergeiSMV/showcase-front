@@ -137,11 +137,11 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
         crossAxisCount: 2,
         mainAxisSpacing: 5,
         crossAxisSpacing: 10,
-        childAspectRatio: 0.6
+        childAspectRatio: 0.55
       ),
       itemBuilder: (BuildContext context, int index) {
         ProductModel categoryProducts = ProductModel(product: allProducts[index]);
-        return ProductsViews(key: ValueKey(categoryProducts.id), currentProduct: categoryProducts,);
+        return ProductsViews(currentProduct: categoryProducts,);
       },
     );
   }

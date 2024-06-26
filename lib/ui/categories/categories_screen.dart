@@ -127,13 +127,16 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
             child: InkWell(
               onTap: (){ 
                 category.children.isEmpty ?
-                GoRouter.of(context).push(
-                  '/categories/${ category.id}/products',
-                  extra: {
-                    'mainCategory': category.name,
-                    'categoryID': category.id
-                  },
-                ) : 
+                {
+                  ref.read(productsProvider.notifier).state = null,
+                  GoRouter.of(context).push(
+                    '/categories/${category.id}/products',
+                    extra: {
+                      'mainCategory': category.name,
+                      'categoryID': category.id
+                    },
+                  )
+                } : 
                 GoRouter.of(context).push(
                   '/categories/${category.id}',
                   extra: {

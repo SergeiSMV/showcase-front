@@ -63,21 +63,6 @@ class _ProductCardState extends State<ProductCard> {
                     imageUrl: picURL,
                     errorWidget: (context, url, error) => Align(alignment: Alignment.center, child: Opacity(opacity: 0.3, child: Image.asset(categoryImagePath['empty'], scale: 3))),
                   );
-                  
-                  /*
-                  FutureBuilder<Image>(
-                    future: BackendImplements().backendPicture(picURL),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      } else if (snapshot.hasError) {
-                        return Image.asset(categoryImagePath['empty'], scale: 2,);
-                      } else {
-                        return snapshot.data!;
-                      }
-                    },
-                  );
-                  */
                 },
               ),
             ),
@@ -114,6 +99,13 @@ class _ProductCardState extends State<ProductCard> {
               ),
             ),
             const SizedBox(height: 20,),
+            widget.product.futureDate.isEmpty ? const SizedBox.shrink() :
+            Row(
+              children: [
+                Icon(MdiIcons.arrowTopRightBoldBox, color: Colors.red,),
+                Expanded(child: Text('${widget.product.futurePrice}₽ c ${widget.product.futureDate}', style: darkCategory(16), maxLines: 1, overflow: TextOverflow.ellipsis,)),
+              ],
+            ),
             Align(alignment: Alignment.centerLeft, child: getPrice(widget.product.basePrice, widget.product.clientPrice,)),
             const SizedBox(height: 10,),
           ],
@@ -128,10 +120,9 @@ class _ProductCardState extends State<ProductCard> {
         children: [
           Icon(MdiIcons.bookmark),
           const SizedBox(width: 5,),
-          Text('$clientPrice', style: darkProduct(24, FontWeight.normal), overflow: TextOverflow.fade,),
-          Text('₽', style: grey(20, FontWeight.normal), overflow: TextOverflow.fade,),
+          Text('$clientPrice₽', style: darkProduct(24, FontWeight.normal), overflow: TextOverflow.fade,),
           const SizedBox(width: 10,),
-          Text('$basePrice', style: blackThroughPrice(20, FontWeight.normal)),
+          Text('$basePrice₽', style: blackThroughPrice(20, FontWeight.normal)),
         ],
       );
     } else {
@@ -139,8 +130,7 @@ class _ProductCardState extends State<ProductCard> {
         children: [
           Icon(MdiIcons.bookmark),
           const SizedBox(width: 5,),
-          Text('$clientPrice', style: darkProduct(24, FontWeight.normal)),
-          Text('₽', style: grey(20, FontWeight.normal), overflow: TextOverflow.fade,),
+          Text('$clientPrice₽', style: darkProduct(24, FontWeight.normal)),
         ],
       );
     }

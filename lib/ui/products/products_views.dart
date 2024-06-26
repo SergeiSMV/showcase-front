@@ -104,23 +104,18 @@ class _ProductsViewsState extends ConsumerState<ProductsViews> {
                   const SizedBox(height: 5,),
                   Text(widget.currentProduct.shortName, style: darkProduct(16, FontWeight.w500), maxLines: 3, overflow: TextOverflow.ellipsis,),
                   const SizedBox(height: 5,),
-                  
-                  // Align(alignment: Alignment.centerLeft, child: 
-                  //   Text(
-                  //     'остаток: ${widget.currentProduct.quantity.toString()}', 
-                  //     style: widget.currentProduct.quantity == 0 ? red(14, FontWeight.w500) : grey(14, FontWeight.w500), 
-                  //     maxLines: 3, 
-                  //     overflow: TextOverflow.fade,
-                  //   )
-                  // ),
-                  
+                  widget.currentProduct.futureDate.isEmpty ? const SizedBox.shrink() :
+                  Row(
+                    children: [
+                      Icon(MdiIcons.arrowTopRightBoldBox, color: Colors.red, size: 18,),
+                      Expanded(child: Text('${widget.currentProduct.futurePrice}₽ c ${widget.currentProduct.futureDate}', style: darkCategory(14), maxLines: 1, overflow: TextOverflow.ellipsis,)),
+                    ],
+                  ),
                   Expanded(child: Align(alignment: Alignment.centerLeft, child: getPrice(widget.currentProduct.basePrice, widget.currentProduct.clientPrice,))),
                   const SizedBox(height: 10,),
                   Consumer(
                     builder: (context, ref, child) {
-
                       final cart = ref.watch(cartProvider);
-
                       return SizedBox(
                         width: double.infinity,
                         child: 
@@ -246,21 +241,6 @@ class _ProductsViewsState extends ConsumerState<ProductsViews> {
               errorWidget: (context, url, error) => Align(alignment: Alignment.center, child: Opacity(opacity: 0.3, child: Image.asset(categoryImagePath['empty'], scale: 3))),
             ),
           );
-          
-          /*
-          FutureBuilder<Image>(
-            future: BackendImplements().backendPicture(picURL),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                return Image.asset(categoryImagePath['empty'], scale: 3,);
-              } else {
-                return snapshot.data!;
-              }
-            },
-          );
-          */
         },
       ),
     );
