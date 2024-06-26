@@ -6,6 +6,10 @@ import 'package:showcase_front/constants/fonts.dart';
 import '../../data/models/response_model/response_model.dart';
 import '../../data/models/response_product_model/response_product_model.dart';
 
+
+
+
+
 responseDetail(BuildContext mainContext, ResponseModel response){
   return showModalBottomSheet(
     isScrollControlled: true,
@@ -67,20 +71,37 @@ responseDetail(BuildContext mainContext, ResponseModel response){
                         children: [
                           product.comment == null && product.replaceName == null && product.replaceQuantity == null ? 
                             const SizedBox.shrink() :
-                            Row(
-                              children: [
-                                Icon(MdiIcons.commentAlert, size: 18, color: Colors.green,),
-                                const SizedBox(width: 10,),
-                                Text('есть корректировки', style: darkCategory(16, FontWeight.w500), overflow: TextOverflow.clip,),
-                              ],
+                            InkWell(
+                              onTap: (){
+                                changeDetails(context, response, product);
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 3),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  border: Border.all(
+                                    width: 3,
+                                    color: Colors.transparent,
+                                  ),
+                                  gradient: const LinearGradient(
+                                    colors: [
+                                      Colors.amber,
+                                      Colors.white
+                                    ]
+                                  )
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(MdiIcons.commentAlert, size: 18, color: Colors.black,),
+                                    const SizedBox(width: 10,),
+                                    Text('доп. информация', style: darkCategory(16, FontWeight.w500), overflow: TextOverflow.clip,),
+                                  ],
+                                ),
+                              ),
                             ),
                           product.comment == null && product.replaceName == null && product.replaceQuantity == null ? 
                             const SizedBox.shrink() : const SizedBox(height: 5,),
                           Text(product.name, style: darkCategory(16, FontWeight.w500), overflow: TextOverflow.clip,),
-                          // product.comment == null ? const SizedBox.shrink() : const SizedBox(height: 5,),
-                          // product.replaceName == null ? const SizedBox.shrink() : Text(product.replaceName!, style: darkCategory(16, FontWeight.w500), overflow: TextOverflow.clip,),
-                          // product.replaceName == null ? const SizedBox.shrink() : const SizedBox(height: 3,),
-                          // Text(product.name, style: product.replaceName == null ? darkCategory(16, FontWeight.w500) : greyThroughProduct(14, FontWeight.w500), overflow: TextOverflow.clip,),
                           const SizedBox(height: 5,),
                           Row(
                             children: [
@@ -89,17 +110,10 @@ responseDetail(BuildContext mainContext, ResponseModel response){
                               Text('${product.price}₽', style: black(16)),
                             ],
                           ),
-
                           Row(
                             children: [
                               Icon(MdiIcons.packageVariantClosed, size: 18, color: Colors.grey,),
                               const SizedBox(width: 10,),
-                              // product.replaceQuantity == null ? const SizedBox.shrink() : Text(product.replaceQuantity.toString(), style: product.replaceQuantity == null ? black(16) : greyThroughProduct(16)),
-                              // product.replaceQuantity == null ? const SizedBox.shrink() :
-                              // Padding(
-                              //   padding: const EdgeInsets.symmetric(horizontal: 5),
-                              //   child: Icon(MdiIcons.arrowRight, size: 15, color: Colors.black,),
-                              // ),
                               Text('${product.quantity}', style: black(16)),
                             ],
                           ),
@@ -138,4 +152,74 @@ Widget totalPrice(List ordersProduct){
   );
 }
 
+
+Future changeDetails(BuildContext context, ResponseModel response, ResponseProductModel product) {
+  return showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        insetPadding: const EdgeInsets.all(10),
+        actionsPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+        title: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('доп. информация к отгрузке ${response.responseID} от ${response.updated}', style: darkCategory(18),),
+            const SizedBox(height: 3,),
+            Text('позиция: ${product.name}', style: darkCategory(16),),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            product.replaceName == null ? const SizedBox.shrink() :
+            Row(
+              children: [
+                Icon(MdiIcons.arrowURightBottom, size: 30, color: Colors.green,),
+                Expanded(
+                  child: Column(
+                    children: [
+                      Text(product.replaceName!, style: greyThroughProduct(16), overflow: TextOverflow.clip,),
+                      const SizedBox(height: 3,),
+                      Text(product.name, style: darkCategory(16), overflow: TextOverflow.clip,),
+                    ],
+                  ),
+                )
+              ],
+            ),
+            product.replaceQuantity == null ? const SizedBox.shrink() :
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Row(
+                children: [
+                  Icon(MdiIcons.arrowURightBottom, size: 30, color: Colors.green,),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('${product.replaceQuantity!.toString()} шт.', style: greyThroughProduct(16), overflow: TextOverflow.clip,),
+                        const SizedBox(height: 3,),
+                        Text('${product.quantity.toString()} шт.', style: darkCategory(16), overflow: TextOverflow.clip,),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+            product.comment == null ? const SizedBox.shrink() :
+            Padding(
+              padding: const EdgeInsets.only(top: 20),
+              child: Align(alignment: Alignment.centerLeft, child: Text('комментарий:\n${product.comment!}', maxLines: 5, style: darkCategory(16), overflow: TextOverflow.clip,)),
+            )
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () { Navigator.of(context).pop(); },
+            child: Text('понятно', style: black(18),),
+          ),
+        ],
+      );
+    },
+  );
+}
 
