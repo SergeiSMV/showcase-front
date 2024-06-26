@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -22,6 +24,81 @@ void main() async {
 
 
 
+class App extends ConsumerStatefulWidget {
+  const App({super.key});
+
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _AppState();
+}
+
+class _AppState extends ConsumerState<App> {
+
+  Timer? connectMonitoring;
+
+  @override
+  void initState(){
+    super.initState();
+    isAutgorized();
+    scheduleUpdater();
+  }
+
+  @override
+  void dispose() {
+    connectMonitoring?.cancel();
+    super.dispose();
+  }
+
+  Future<void> isAutgorized() async {
+    HiveImplements hive = HiveImplements();
+    String token = await hive.getToken();
+    if (token.isNotEmpty) {
+      final jwt = JWT.verify(token, SecretKey(secretJWT));
+      final payload = jwt.payload;
+      ref.read(isAutgorizedProvider.notifier).state = true;
+      ref.read(clientIDProvider.notifier).state = payload['client_id'];
+      return ref.refresh(baseCartsProvider);
+    }
+    
+  }
+
+  void scheduleUpdater() {
+    if (connectMonitoring != null) {
+      connectMonitoring!.cancel();
+    }
+    connectMonitoring = Timer.periodic(const Duration(seconds: 10), (timer) {
+      final int clientID = ref.read(clientIDProvider);
+      if (clientID != 0){
+        print('обновление разделов!');
+        ref.refresh(baseRequestsProvider);
+        ref.refresh(baseCartsProvider);
+        ref.refresh(baseResponsesProvider);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp.router(
+      scaffoldMessengerKey: GlobalScaffoldMessenger.scaffoldMessengerKey,
+      routeInformationParser: router.routeInformationParser,
+      routeInformationProvider: router.routeInformationProvider,
+      routerDelegate: router.routerDelegate,
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        textSelectionTheme: const TextSelectionThemeData(
+          cursorColor: Colors.black,
+        ),
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        hoverColor: Colors.transparent,
+      ),
+    );
+  }
+}
+
+
+
+/*
 class App extends ConsumerWidget {
   const App({super.key});
 
@@ -47,17 +124,7 @@ class App extends ConsumerWidget {
     );
   }
 }
+*/
 
-Future<void> isAutgorized(WidgetRef ref) async {
-  HiveImplements hive = HiveImplements();
-  String token = await hive.getToken();
-  if (token.isNotEmpty) {
-    final jwt = JWT.verify(token, SecretKey(secretJWT));
-    final payload = jwt.payload;
-    ref.read(isAutgorizedProvider.notifier).state = true;
-    ref.read(clientIDProvider.notifier).state = payload['client_id'];
-    return ref.refresh(baseCartsProvider);
-  }
-  
-}
+
 
