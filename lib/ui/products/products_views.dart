@@ -21,10 +21,10 @@ class ProductsViews extends ConsumerStatefulWidget {
   const ProductsViews({super.key, required this.currentProduct});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _GoodsViewsState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _ProductsViewsState();
 }
 
-class _GoodsViewsState extends ConsumerState<ProductsViews> {
+class _ProductsViewsState extends ConsumerState<ProductsViews> {
 
   final TextEditingController _quantityController = TextEditingController();
   final PageController pageController = PageController();
@@ -104,14 +104,15 @@ class _GoodsViewsState extends ConsumerState<ProductsViews> {
                   const SizedBox(height: 5,),
                   Text(widget.currentProduct.shortName, style: darkProduct(16, FontWeight.w500), maxLines: 3, overflow: TextOverflow.ellipsis,),
                   const SizedBox(height: 5,),
-                  Align(alignment: Alignment.centerLeft, child: 
-                    Text(
-                      'остаток: ${widget.currentProduct.quantity.toString()}', 
-                      style: widget.currentProduct.quantity == 0 ? red(14, FontWeight.w500) : grey(14, FontWeight.w500), 
-                      maxLines: 3, 
-                      overflow: TextOverflow.fade,
-                    )
-                  ),
+                  
+                  // Align(alignment: Alignment.centerLeft, child: 
+                  //   Text(
+                  //     'остаток: ${widget.currentProduct.quantity.toString()}', 
+                  //     style: widget.currentProduct.quantity == 0 ? red(14, FontWeight.w500) : grey(14, FontWeight.w500), 
+                  //     maxLines: 3, 
+                  //     overflow: TextOverflow.fade,
+                  //   )
+                  // ),
                   
                   Expanded(child: Align(alignment: Alignment.centerLeft, child: getPrice(widget.currentProduct.basePrice, widget.currentProduct.clientPrice,))),
                   const SizedBox(height: 10,),
@@ -283,19 +284,13 @@ class _GoodsViewsState extends ConsumerState<ProductsViews> {
     if (basePrice > clientPrice){
       return Row(
         children: [
-          Text('$clientPrice', style: darkProduct(20, FontWeight.normal), overflow: TextOverflow.fade,),
-          Text('₽', style: grey(18, FontWeight.normal), overflow: TextOverflow.fade,),
+          Text('$clientPrice₽', style: darkProduct(20, FontWeight.normal), overflow: TextOverflow.fade,),
           const SizedBox(width: 10,),
           Text('$basePrice₽', style: blackThroughPrice(18, FontWeight.normal)),
         ],
       );
     } else {
-      return Row(
-        children: [
-          Text('$clientPrice', style: darkProduct(20, FontWeight.normal)),
-          Text('₽', style: grey(18, FontWeight.normal), overflow: TextOverflow.fade,),
-        ],
-      );
+      return Text('$clientPrice₽', style: darkProduct(20, FontWeight.normal));
     }
   }
 

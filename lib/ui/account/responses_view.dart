@@ -97,13 +97,13 @@ class _RequestsViewState extends ConsumerState<ResponsesView> with SingleTickerP
               ),
             );
           },
-          child: requestsViews()
+          child: responsesViews()
         ),
       ],
     );
   }
 
-  Widget requestsViews() {
+  Widget responsesViews() {
     return Consumer(
       builder: (context, ref, child){
         return ref.watch(baseResponsesProvider).when(

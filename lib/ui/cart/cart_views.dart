@@ -82,12 +82,7 @@ class _CartViewsState extends ConsumerState<CartViews> {
                     ),
                     const SizedBox(height: 5,),
                     getPrice(widget.cartProduct.basePrice, widget.cartProduct.price),
-                    Row(
-                      children: [
-                        Text('итого: ${widget.cartProduct.totalPrice}', style: black(20, FontWeight.w500), overflow: TextOverflow.clip,),
-                        Text('₽', style: grey(20, FontWeight.normal), overflow: TextOverflow.clip,),
-                      ],
-                    ),
+                    Text('итого: ${widget.cartProduct.totalPrice}₽', style: black(20, FontWeight.w500), overflow: TextOverflow.clip,),
                     Row(
                       children: [
                         quantityControlButton('minus'),
@@ -225,20 +220,13 @@ class _CartViewsState extends ConsumerState<CartViews> {
     if (basePrice > clientPrice){
       return Row(
         children: [
-          Text('цена: $clientPrice', style: darkCategory(16), overflow: TextOverflow.fade,),
-          Text('₽', style: grey(14), overflow: TextOverflow.fade,),
+          Text('цена: $clientPrice₽', style: darkCategory(16), overflow: TextOverflow.fade,),
           const SizedBox(width: 10,),
-          Text('$basePrice', style: blackThroughPrice(16)),
-          Text('₽', style: grey(14), overflow: TextOverflow.fade,),
+          Text('$basePrice₽', style: blackThroughPrice(16)),
         ],
       );
     } else {
-      return Row(
-        children: [
-          Text('цена: $clientPrice', style: darkCategory(16)),
-          Text('₽', style: grey(14, FontWeight.normal), overflow: TextOverflow.fade,),
-        ],
-      );
+      return Text('цена: $clientPrice₽', style: darkCategory(16));
     }
   }
 

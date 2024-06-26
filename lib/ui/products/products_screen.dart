@@ -16,30 +16,44 @@ class ProductsScreen extends ConsumerStatefulWidget {
   const ProductsScreen({super.key, required this.categoryID, required this.mainCategory});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _GoodsScreenState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _ProductsScreenState();
 }
 
-class _GoodsScreenState extends ConsumerState<ProductsScreen> {
+class _ProductsScreenState extends ConsumerState<ProductsScreen> {
 
   @override
   void initState(){
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Ваша функция, которая должна выполниться после полного построения виджета
+      return ref.refresh(baseProductsProvider(widget.categoryID));
+    });
+  }
+
+  @override
+  void dispose(){
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 5),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(height: 20,),
-            header(context),
-            authorizedBanner(),
-            const SizedBox(height: 10,),
-            productsViews()
-          ],
+    return PopScope(
+      onPopInvoked: (result){
+        
+      },
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 5),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 20,),
+              header(context),
+              authorizedBanner(),
+              const SizedBox(height: 10,),
+              productsViews()
+            ],
+          ),
         ),
       ),
     );
@@ -55,8 +69,7 @@ class _GoodsScreenState extends ConsumerState<ProductsScreen> {
           child: InkWell(
             onTap: (){
               GoRouter.of(context).push('/auth').then((clientID) {
-                  return {ref.refresh(baseProductsProvider(widget.categoryID)),
-                    ref.refresh(baseCartsProvider)};
+                  return ref.refresh(baseProductsProvider(widget.categoryID));
                 }
               );
             },
@@ -106,14 +119,9 @@ class _GoodsScreenState extends ConsumerState<ProductsScreen> {
     return Expanded(
       child: Consumer(
         builder: (context, ref, child){
-          return ref.watch(baseProductsProvider(widget.categoryID)).when(
-            loading: () => const Loading(),
-            error: (error, _) => Center(child: Text(error.toString())),
-            data: (_){
-              final allProducts = ref.watch(productsProvider);
-              return allProducts.isEmpty ? update(ref) : products(ref, allProducts);
-            },  
-          );
+          final allProducts = ref.watch(productsProvider);
+          return allProducts == null ? const Loading() :
+            allProducts.isEmpty ? update(ref) : products(ref, allProducts);
         },
       ),
     );
@@ -129,11 +137,11 @@ class _GoodsScreenState extends ConsumerState<ProductsScreen> {
         crossAxisCount: 2,
         mainAxisSpacing: 5,
         crossAxisSpacing: 10,
-        childAspectRatio: 0.55
+        childAspectRatio: 0.6
       ),
       itemBuilder: (BuildContext context, int index) {
         ProductModel categoryProducts = ProductModel(product: allProducts[index]);
-        return ProductsViews(currentProduct: categoryProducts,);
+        return ProductsViews(key: ValueKey(categoryProducts.id), currentProduct: categoryProducts,);
       },
     );
   }

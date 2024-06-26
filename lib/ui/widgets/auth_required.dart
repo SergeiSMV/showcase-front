@@ -1,0 +1,34 @@
+
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../constants/fonts.dart';
+
+Widget authRequired(BuildContext context){
+  return Center(
+    // alignment: Alignment.bottomCenter,
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Image.asset('lib/images/logo_full.png', scale: 4),
+        const SizedBox(height: 20,),
+        SizedBox(
+          width: 300,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF00B737),
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            onPressed: () { 
+              GoRouter.of(context).push('/auth');
+            }, 
+            child: Text('авторизоваться', style: white(16),)
+          ),
+        ),
+      ],
+    ),
+  );
+}

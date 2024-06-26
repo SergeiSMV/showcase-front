@@ -65,19 +65,23 @@ responseDetail(BuildContext mainContext, ResponseModel response){
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          product.comment == null ? const SizedBox.shrink() : 
+                          product.comment == null && product.replaceName == null && product.replaceQuantity == null ? 
+                            const SizedBox.shrink() :
                             Row(
                               children: [
                                 Icon(MdiIcons.commentAlert, size: 18, color: Colors.green,),
                                 const SizedBox(width: 10,),
-                                Text(product.comment!, style: darkCategory(16, FontWeight.w500), overflow: TextOverflow.clip,),
+                                Text('есть корректировки', style: darkCategory(16, FontWeight.w500), overflow: TextOverflow.clip,),
                               ],
                             ),
-                          product.comment == null ? const SizedBox.shrink() : const SizedBox(height: 5,),
-                          product.replaceName == null ? const SizedBox.shrink() : Text(product.replaceName!, style: darkCategory(16, FontWeight.w500), overflow: TextOverflow.clip,),
-                          product.replaceName == null ? const SizedBox.shrink() : const SizedBox(height: 3,),
-                          Text(product.name, style: product.replaceName == null ? darkCategory(16, FontWeight.w500) : greyThroughProduct(14, FontWeight.w500), overflow: TextOverflow.clip,),
-                          const SizedBox(height: 10,),
+                          product.comment == null && product.replaceName == null && product.replaceQuantity == null ? 
+                            const SizedBox.shrink() : const SizedBox(height: 5,),
+                          Text(product.name, style: darkCategory(16, FontWeight.w500), overflow: TextOverflow.clip,),
+                          // product.comment == null ? const SizedBox.shrink() : const SizedBox(height: 5,),
+                          // product.replaceName == null ? const SizedBox.shrink() : Text(product.replaceName!, style: darkCategory(16, FontWeight.w500), overflow: TextOverflow.clip,),
+                          // product.replaceName == null ? const SizedBox.shrink() : const SizedBox(height: 3,),
+                          // Text(product.name, style: product.replaceName == null ? darkCategory(16, FontWeight.w500) : greyThroughProduct(14, FontWeight.w500), overflow: TextOverflow.clip,),
+                          const SizedBox(height: 5,),
                           Row(
                             children: [
                               Icon(MdiIcons.bookmark, size: 18, color: Colors.grey,),
@@ -85,17 +89,18 @@ responseDetail(BuildContext mainContext, ResponseModel response){
                               Text('${product.price}₽', style: black(16)),
                             ],
                           ),
+
                           Row(
                             children: [
                               Icon(MdiIcons.packageVariantClosed, size: 18, color: Colors.grey,),
                               const SizedBox(width: 10,),
-                              Text('${product.quantity}', style: product.replaceQuantity == null ? black(16) : greyThroughProduct(16)),
-                              product.replaceQuantity == null ? const SizedBox.shrink() :
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 5),
-                                child: Icon(MdiIcons.arrowRight, size: 15, color: Colors.black,),
-                              ),
-                              product.replaceQuantity == null ? const SizedBox.shrink() : Text(product.replaceQuantity.toString(), style: black(16)),
+                              // product.replaceQuantity == null ? const SizedBox.shrink() : Text(product.replaceQuantity.toString(), style: product.replaceQuantity == null ? black(16) : greyThroughProduct(16)),
+                              // product.replaceQuantity == null ? const SizedBox.shrink() :
+                              // Padding(
+                              //   padding: const EdgeInsets.symmetric(horizontal: 5),
+                              //   child: Icon(MdiIcons.arrowRight, size: 15, color: Colors.black,),
+                              // ),
+                              Text('${product.quantity}', style: black(16)),
                             ],
                           ),
                           const SizedBox(height: 10,),

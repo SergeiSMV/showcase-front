@@ -7,6 +7,7 @@ import 'package:showcase_front/data/models/cart_model/cart_model.dart';
 
 import '../../data/providers.dart';
 import '../../data/repositories/backend_implements.dart';
+import '../widgets/auth_required.dart';
 import '../widgets/loading.dart';
 import 'cart_views.dart';
 
@@ -47,39 +48,14 @@ class _CartScreenState extends ConsumerState<CartScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
           child: 
           
-          clientID == 0 ?
-          Padding(
-            padding: const EdgeInsets.only(bottom: 20),
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: SizedBox(
-                width: 300,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF00B737),
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  onPressed: () { 
-                    GoRouter.of(context).push('/auth');
-                  }, 
-                  child: Text('авторизоваться', style: white(16),)
-                ),
-              ),
-            ),
-          ) :
-          
+          clientID == 0 ? authRequired(context) :
           Consumer(
             builder: (context, ref, child) {
               return ref.watch(baseCartsProvider).when(
                 loading: () => const Loading(),
                 error: (error, _) => Center(child: Text(error.toString())),
                 data: (_){
-      
                   final ordersProduct = ref.watch(cartProvider);
-                  
                   return Column(
                     mainAxisSize: MainAxisSize.max,
                     children: [
@@ -120,7 +96,10 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                             ),
                             onPressed: () async {
                               await GoRouter.of(context).push('/additinal_info',).then((_){
-                                return {ref.refresh(baseCartsProvider), ref.refresh(baseRequestsProvider)};
+                                return {
+                                  ref.refresh(baseCartsProvider), 
+                                  ref.refresh(baseRequestsProvider)
+                                };
                               });
                             }, 
                             child: Text('заказать', style: white(18),)

@@ -9,6 +9,7 @@ import '../../constants/fonts.dart';
 import '../../constants/server_config.dart';
 import '../../data/models/category_model/category_data.dart';
 import '../../data/models/category_model/category_model.dart';
+import '../../data/providers.dart';
 
 class SubCategoriesScreen extends ConsumerStatefulWidget {
   final List subCategories;
@@ -94,13 +95,16 @@ class _SubCategoriesScreenState extends ConsumerState<SubCategoriesScreen> {
           return InkWell(
             onTap: (){ 
               category.children.isEmpty ?
-              GoRouter.of(context).push(
-                '/categories/${category.id}/products',
-                extra: {
-                  'mainCategory': category.name,
-                  'categoryID': category.id
-                },
-              ) :
+              {
+                ref.read(productsProvider.notifier).state = null,
+                GoRouter.of(context).push(
+                  '/categories/${category.id}/products',
+                  extra: {
+                    'mainCategory': category.name,
+                    'categoryID': category.id
+                  },
+                )
+              } :
               {
                 GoRouter.of(context).push(
                 '/categories/${category.id}',

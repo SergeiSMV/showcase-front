@@ -24,6 +24,13 @@ class _AuthState extends ConsumerState<Auth> {
   final BackendImplements backend = BackendImplements();
 
   @override
+  void initState(){
+    super.initState();
+    _loginController.text = 'client1';
+    _passController.text = 'DerParol';
+  }
+
+  @override
   void dispose(){
     _loginController.dispose();
     _passController.dispose();
@@ -37,104 +44,108 @@ class _AuthState extends ConsumerState<Auth> {
         padding: const EdgeInsets.all(20.0),
         child: Builder(
           builder: (context) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Image.asset('lib/images/trade_mark.png', scale: 5),
-                  const SizedBox(height: 50,),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(
-                        color: Colors.transparent
-                      ),
-                      color: Colors.white,
-                    ),
-                    height: 45,
-                    width: 300,
-                    child: TextField(
-                      controller: _loginController,
-                      style: black(18),
-                      minLines: 1,
-                      obscureText: false,
-                      textAlignVertical: TextAlignVertical.center,
-                      decoration: InputDecoration(
-                        focusedBorder:OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.green, width: 2.0),
-                          borderRadius: BorderRadius.circular(5.0),
+            return Scaffold(
+              backgroundColor: Colors.white,
+              body: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset('lib/images/logo_full.png', scale: 4),
+                    const SizedBox(height: 50,),
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(
+                          color: Colors.transparent
                         ),
-                        hintStyle: grey(16),
-                        hintText: 'id клиента',
-                        prefixIcon: const Icon(Icons.person, color: Colors.black,),
-                        isCollapsed: true
+                        color: Colors.white,
                       ),
-                      onChanged: (_){ },
-                      onSubmitted: (_) { },
-                    ),
-                  ),
-                  const SizedBox(height: 15,),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(
-                        color: Colors.transparent
-                      ),
-                      color: Colors.white,
-                    ),
-                    height: 45,
-                    width: 300,
-                    child: TextField(
-                      controller: _passController,
-                      style: black(18),
-                      minLines: 1,
-                      obscureText: true,
-                      textAlignVertical: TextAlignVertical.center,
-                      decoration: InputDecoration(
-                        focusedBorder:OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.green, width: 2.0),
-                          borderRadius: BorderRadius.circular(5),
+                      height: 45,
+                      width: 300,
+                      child: TextField(
+                        controller: _loginController,
+                        style: black(18),
+                        minLines: 1,
+                        obscureText: false,
+                        textAlignVertical: TextAlignVertical.center,
+                        decoration: InputDecoration(
+                          focusedBorder:OutlineInputBorder(
+                            borderSide: const BorderSide(color: Colors.green, width: 2.0),
+                            borderRadius: BorderRadius.circular(5.0),
+                          ),
+                          hintStyle: grey(16),
+                          hintText: 'id клиента',
+                          prefixIcon: const Icon(Icons.person, color: Colors.black,),
+                          isCollapsed: true
                         ),
-                        hintStyle: grey(16),
-                        hintText: 'пароль',
-                        prefixIcon: const Icon(Icons.lock, color: Colors.black,),
-                        isCollapsed: true
+                        onChanged: (_){ },
+                        onSubmitted: (_) { },
                       ),
-                      onChanged: (_){ },
-                      onSubmitted: (_) { },
                     ),
-                  ),
-                  const SizedBox(height: 30,),
-                  SizedBox(
-                    width: 300,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                    const SizedBox(height: 15,),
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(
+                          color: Colors.transparent
                         ),
+                        color: Colors.white,
                       ),
-                      onPressed: () async { 
-                        FocusScope.of(context).unfocus();
-                        final progress = ProgressHUD.of(context);
-                        progress?.showWithText('авторизуемся');
-                        await backend.authorization(_loginController.text, _passController.text).then((token) async {
-                          token.isNotEmpty ?
-                          await HiveImplements().saveToken(token).then((_) {
-                            final jwt = JWT.verify(token, SecretKey(secretJWT));
-                            final payload = jwt.payload;
-                            ref.read(isAutgorizedProvider.notifier).state = true;
-                            ref.read(clientIDProvider.notifier).state = payload['client_id'];
-                            GoRouter.of(context).pop(payload['client_id']);
-                          }) : null;
-                          progress?.dismiss();
-                        });
-                      }, 
-                      child: Text('авторизоваться', style: white(16),)
+                      height: 45,
+                      width: 300,
+                      child: TextField(
+                        controller: _passController,
+                        style: black(18),
+                        minLines: 1,
+                        obscureText: true,
+                        textAlignVertical: TextAlignVertical.center,
+                        decoration: InputDecoration(
+                          focusedBorder:OutlineInputBorder(
+                            borderSide: const BorderSide(color: Colors.green, width: 2.0),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          hintStyle: grey(16),
+                          hintText: 'пароль',
+                          prefixIcon: const Icon(Icons.lock, color: Colors.black,),
+                          isCollapsed: true
+                        ),
+                        onChanged: (_){ },
+                        onSubmitted: (_) { },
+                      ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 30,),
+                    SizedBox(
+                      width: 300,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        onPressed: () async { 
+                          FocusScope.of(context).unfocus();
+                          final progress = ProgressHUD.of(context);
+                          progress?.showWithText('авторизуемся');
+                          await backend.authorization(_loginController.text, _passController.text).then((token) async {
+                            token.isNotEmpty ?
+                            await HiveImplements().saveToken(token).then((_) {
+                              final jwt = JWT.verify(token, SecretKey(secretJWT));
+                              final payload = jwt.payload;
+                              ref.read(isAutgorizedProvider.notifier).state = true;
+                              ref.read(clientIDProvider.notifier).state = payload['client_id'];
+                              GoRouter.of(context).pop(payload['client_id']);
+                              return ref.refresh(baseCartsProvider);
+                            }) : null;
+                            progress?.dismiss();
+                          });
+                        }, 
+                        child: Text('авторизоваться', style: white(16),)
+                      ),
+                    ),
+                  ],
+                ),
               ),
             );
           }

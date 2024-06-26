@@ -78,7 +78,7 @@ class _ShipsViewState extends ConsumerState<ShipsView> with SingleTickerProvider
               const SizedBox(height: 10,),
               header(),
               const SizedBox(height: 20,),
-              addressView()
+              Expanded(child: addressView())
               /*
               InkWell(
                 onTap: shipsHandleTap,

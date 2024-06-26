@@ -23,7 +23,7 @@ final baseCategoriesProvider = FutureProvider.autoDispose((ref) async {
 });
 
 // провайдер товаров
-final productsProvider = StateProvider<List>((ref) => []);
+final productsProvider = StateProvider<List?>((ref) => null);
 
 final baseProductsProvider = FutureProvider.autoDispose.family<List, int>((ref, categoryID) async {
   final result = await BackendImplements().backendProducts(categoryID);

@@ -24,7 +24,7 @@ final GoRouter router = GoRouter(
   routes: <RouteBase>[
     ShellRoute(
       navigatorKey: _shellNavigatorKey,
-      builder: (context, state, child) {
+      builder: (context, state, child) {        
         return Scaffold(
           body: child,
           bottomNavigationBar: const BottomNavBar(),

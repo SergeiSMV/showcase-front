@@ -85,13 +85,11 @@ class _CabinetState extends ConsumerState<Cabinet> {
           const SizedBox(width: 15,),
           InkWell(
             onTap: () async {
-              await HiveImplements().saveToken('').then((_) {
-                ref.invalidate(baseProductsProvider);
-                ref.invalidate(baseCartsProvider);
-                ref.read(isAutgorizedProvider.notifier).state = false;
-                ref.read(clientIDProvider.notifier).state = 0;
-                ref.read(cartBadgesProvider.notifier).state = 0;
-              });
+              ref.read(isAutgorizedProvider.notifier).state = false;
+              ref.read(clientIDProvider.notifier).state = 0;
+              ref.read(cartBadgesProvider.notifier).state = 0;
+              ref.read(cartProvider.notifier).state = [];
+              await HiveImplements().saveToken('');
             },
             child: Column(
               children: [
