@@ -1,3 +1,5 @@
+// ignore_for_file: unused_result
+
 import 'dart:async';
 
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
@@ -31,19 +33,21 @@ class App extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _AppState();
 }
 
-class _AppState extends ConsumerState<App> {
+class _AppState extends ConsumerState<App> with WidgetsBindingObserver {
 
   Timer? connectMonitoring;
 
   @override
   void initState(){
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     isAutgorized();
     scheduleUpdater();
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     connectMonitoring?.cancel();
     super.dispose();
   }
@@ -61,6 +65,15 @@ class _AppState extends ConsumerState<App> {
     
   }
 
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      connectMonitoring?.cancel();
+    } else if (state == AppLifecycleState.resumed) {
+      scheduleUpdater();
+    }
+  }
+
   void scheduleUpdater() {
     if (connectMonitoring != null) {
       connectMonitoring!.cancel();
@@ -68,7 +81,6 @@ class _AppState extends ConsumerState<App> {
     connectMonitoring = Timer.periodic(const Duration(seconds: 10), (timer) {
       final int clientID = ref.read(clientIDProvider);
       if (clientID != 0){
-        print('обновление разделов!');
         ref.refresh(baseRequestsProvider);
         ref.refresh(baseCartsProvider);
         ref.refresh(baseResponsesProvider);

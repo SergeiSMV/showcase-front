@@ -28,6 +28,16 @@ Widget authRequired(BuildContext context){
             child: Text('авторизоваться', style: white(16),)
           ),
         ),
+        Padding(
+          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: const SizedBox(height: 20,),
+        ),
+        InkWell(
+          onTap: (){
+            GoRouter.of(context).push('/registration');
+          },
+          child: Text('Еще не зарегистрированы?\nПодайте заявку', style: blue(14), textAlign: TextAlign.center,),
+        )
       ],
     ),
   );

@@ -11,6 +11,7 @@ import '../categories/subcategories_screen.dart';
 import '../categories/categories_screen.dart';
 import '../products/products_screen.dart';
 import '../home/home_screen.dart';
+import '../registration/registration.dart';
 import '../search/search_by_category_screen.dart';
 import '../search/serch_screen.dart';
 import 'bottom_nav_bar.dart';
@@ -40,6 +41,11 @@ final GoRouter router = GoRouter(
           path: '/auth',
           builder: (context, state) => const Auth(),
           pageBuilder: (context, state) => const NoTransitionPage<void>(child: Auth()),
+        ),
+        GoRoute(
+          path: '/registration',
+          builder: (context, state) => const Registration(),
+          pageBuilder: (context, state) => const NoTransitionPage<void>(child: Registration()),
         ),
         GoRoute(
           path: '/categories',

@@ -178,7 +178,7 @@ Future changeDetails(BuildContext context, ResponseModel response, ResponseProdu
                 Expanded(
                   child: Column(
                     children: [
-                      Text(product.replaceName!, style: greyThroughProduct(16), overflow: TextOverflow.clip,),
+                      Text(product.replaceName!, style: grey(16), overflow: TextOverflow.clip,),
                       const SizedBox(height: 3,),
                       Text(product.name, style: darkCategory(16), overflow: TextOverflow.clip,),
                     ],
@@ -196,7 +196,7 @@ Future changeDetails(BuildContext context, ResponseModel response, ResponseProdu
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('${product.replaceQuantity!.toString()} шт.', style: greyThroughProduct(16), overflow: TextOverflow.clip,),
+                        Text('${product.replaceQuantity!.toString()} шт.', style: grey(16), overflow: TextOverflow.clip,),
                         const SizedBox(height: 3,),
                         Text('${product.quantity.toString()} шт.', style: darkCategory(16), overflow: TextOverflow.clip,),
                       ],
