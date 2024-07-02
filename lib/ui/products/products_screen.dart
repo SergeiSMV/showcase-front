@@ -62,8 +62,8 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
   Consumer authorizedBanner() {
     return Consumer(
       builder: (context, ref, child){
-        bool isAutgorized = ref.watch(isAutgorizedProvider);
-        return isAutgorized ? const SizedBox.shrink() :
+        String token = ref.watch(tokenProvider);
+        return token.isNotEmpty ? const SizedBox.shrink() :
         Padding(
           padding: const EdgeInsets.only(top: 5),
           child: InkWell(

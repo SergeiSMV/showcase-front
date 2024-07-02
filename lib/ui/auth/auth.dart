@@ -1,5 +1,4 @@
 
-import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_progress_hud/flutter_progress_hud.dart';
@@ -7,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import 'package:showcase_front/constants/fonts.dart';
 import 'package:showcase_front/data/repositories/hive_implements.dart';
 
-import '../../constants/secret_jwt.dart';
 import '../../data/providers.dart';
 import '../../data/repositories/backend_implements.dart';
 
@@ -26,8 +24,8 @@ class _AuthState extends ConsumerState<Auth> {
   @override
   void initState(){
     super.initState();
-    // _loginController.text = 'client1';
-    // _passController.text = 'DerParol';
+    _loginController.text = 'client1';
+    _passController.text = 'DerParol';
   }
 
   @override
@@ -137,11 +135,8 @@ class _AuthState extends ConsumerState<Auth> {
                               await backend.authorization(_loginController.text, _passController.text).then((token) async {
                                 token.isNotEmpty ?
                                 await HiveImplements().saveToken(token).then((_) {
-                                  final jwt = JWT.verify(token, SecretKey(secretJWT));
-                                  final payload = jwt.payload;
-                                  ref.read(isAutgorizedProvider.notifier).state = true;
-                                  ref.read(clientIDProvider.notifier).state = payload['client_id'];
-                                  GoRouter.of(context).pop(payload['client_id']);
+                                  ref.read(tokenProvider.notifier).state = token;
+                                  GoRouter.of(context).pop();
                                   return ref.refresh(baseCartsProvider);
                                 }) : null;
                                 progress?.dismiss();

@@ -8,8 +8,7 @@ final bottomNavIndexProvider = StateProvider<int>((ref) => 0);
 final lastIndexProvider = StateProvider<int>((ref) => 0);
 
 // провайдеры авторизации
-final isAutgorizedProvider = StateProvider<bool>((ref) => false);
-final clientIDProvider = StateProvider<int>((ref) => 0);
+final tokenProvider = StateProvider<String>((ref) => '');
 
 // провайдер бэйджика корзины
 final cartBadgesProvider = StateProvider<int>((ref) => 0);
@@ -26,7 +25,7 @@ final baseCategoriesProvider = FutureProvider.autoDispose((ref) async {
 final productsProvider = StateProvider<List?>((ref) => null);
 
 final baseProductsProvider = FutureProvider.autoDispose.family<List, int>((ref, categoryID) async {
-  final result = await BackendImplements().backendProducts(categoryID);
+  final List result = await BackendImplements().backendProducts(categoryID, ref);
   ref.read(productsProvider.notifier).state = result;
   return result;
 });
@@ -35,7 +34,7 @@ final baseProductsProvider = FutureProvider.autoDispose.family<List, int>((ref, 
 final cartProvider = StateProvider<List>((ref) => []);
 
 final baseCartsProvider = FutureProvider.autoDispose((ref) async {
-  final result = await BackendImplements().backendGetCart();
+  final result = await BackendImplements().backendGetCart(ref);
   ref.read(cartBadgesProvider.notifier).state = result.length;
   ref.read(cartProvider.notifier).state = result;
   return result;
@@ -45,7 +44,7 @@ final baseCartsProvider = FutureProvider.autoDispose((ref) async {
 final requestsProvider = StateProvider<List>((ref) => []);
 
 final baseRequestsProvider = FutureProvider.autoDispose((ref) async {
-  final result = await BackendImplements().backendGetRequests();
+  final result = await BackendImplements().backendGetRequests(ref);
   ref.read(requestsProvider.notifier).state = result;
   return result;
 });
@@ -56,7 +55,7 @@ final requestDetailProvider = StateProvider<List>((ref) => []);
 
 // провайдер запроса деталей заказа
 final getRequestDetailProvider = FutureProvider.autoDispose.family<List, int>((ref, requestID) async {
-  final result = await BackendImplements().getRequestsID(requestID);
+  final result = await BackendImplements().getRequestsID(requestID, ref);
   ref.read(requestDetailProvider.notifier).state = result;
   return result;
 });
@@ -66,7 +65,7 @@ final getRequestDetailProvider = FutureProvider.autoDispose.family<List, int>((r
 final responsesProvider = StateProvider<List>((ref) => []);
 
 final baseResponsesProvider = FutureProvider.autoDispose((ref) async {
-  final result = await BackendImplements().backendGetResponses();
+  final result = await BackendImplements().backendGetResponses(ref);
   ref.read(responsesProvider.notifier).state = result;
   return result;
 });
@@ -77,7 +76,8 @@ final addressProvider = StateProvider<List>((ref) => []);
 
 // провайдер запроса адресов клиента
 final getAddressProvider = FutureProvider.autoDispose((ref) async {
-  final result = await BackendImplements().getClientAddress();
+  final result = await BackendImplements().getClientAddress(ref);
   ref.read(addressProvider.notifier).state = result;
   return result;
 });
+

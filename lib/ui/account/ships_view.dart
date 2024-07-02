@@ -144,7 +144,7 @@ class _ShipsViewState extends ConsumerState<ShipsView> with SingleTickerProvider
           InkWell(
             onTap: () => newAddressAdd(context, newAddressController).then((_) async {
               newAddressController.text.isEmpty ? null :
-              await backend.addClientAddress(newAddressController.text).then((update){
+              await backend.addClientAddress(newAddressController.text, ref).then((update){
                 ref.read(addressProvider.notifier).state = update.toList();
                 newAddressController.clear();
               });
@@ -178,7 +178,7 @@ class _ShipsViewState extends ConsumerState<ShipsView> with SingleTickerProvider
                       Checkbox(
                         value: selectedIndex == index,
                         onChanged: (bool? value) async {
-                          await backend.patchClientAddress(allAddresses[index]['ship_to_id'], false, true).then((update){
+                          await backend.patchClientAddress(allAddresses[index]['ship_to_id'], false, true, ref).then((update){
                             ref.read(addressProvider.notifier).state = update.toList();
                           });
                         },
@@ -207,7 +207,7 @@ class _ShipsViewState extends ConsumerState<ShipsView> with SingleTickerProvider
                           onPressed: () async {
                             bool? confirmDelete = await confirmAddressDelete(context, allAddresses[index]['address']);
                             !confirmDelete! ? null :
-                            await backend.patchClientAddress(allAddresses[index]['ship_to_id'], true, false).then((update){
+                            await backend.patchClientAddress(allAddresses[index]['ship_to_id'], true, false, ref).then((update){
                               ref.read(addressProvider.notifier).state = update.toList();
                             });
                           },

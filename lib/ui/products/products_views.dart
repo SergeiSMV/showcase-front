@@ -93,8 +93,6 @@ class _ProductsViewsState extends ConsumerState<ProductsViews> {
           child: Builder(
             builder: (context) {
 
-              final int clientID = ref.watch(clientIDProvider);
-
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -122,11 +120,11 @@ class _ProductsViewsState extends ConsumerState<ProductsViews> {
                         currentProductsInCart(cart) ? 
                         Row(
                           children: [
-                            quantityControlButton('minus', clientID, cart),
+                            quantityControlButton('minus', cart),
                             Expanded(
                               child: InkWell(
                                 onTap: () => indicateQuantity(context, _quantityController, widget.currentProduct.name).then((_) async {
-                                  await backend.putExact(widget.currentProduct.id, int.parse(_quantityController.text)).then(
+                                  await backend.putExact(widget.currentProduct.id, int.parse(_quantityController.text), ref).then(
                                     (updateCart) { 
                                       ref.read(cartBadgesProvider.notifier).state = updateCart.length;
                                       ref.read(cartProvider.notifier).state = updateCart;
@@ -138,10 +136,10 @@ class _ProductsViewsState extends ConsumerState<ProductsViews> {
                                 ),
                               )
                             ),
-                            quantityControlButton('plus', clientID)
+                            quantityControlButton('plus')
                           ],
                         )
-                        : toCartButton(clientID, widget.currentProduct.quantity),
+                        : toCartButton(widget.currentProduct.quantity),
                       );
                     }
                   ),
@@ -154,7 +152,7 @@ class _ProductsViewsState extends ConsumerState<ProductsViews> {
     );
   }
 
-  SizedBox quantityControlButton(String operation, int clientID, [List<dynamic> cart = const []]) {
+  SizedBox quantityControlButton(String operation, [List<dynamic> cart = const []]) {
     return SizedBox(
       width: 40,
       child: ElevatedButton(
@@ -169,14 +167,14 @@ class _ProductsViewsState extends ConsumerState<ProductsViews> {
         ),
         onPressed: () async { 
           operation == 'plus' ? 
-          await backend.putIncrement(widget.currentProduct.id).then(
+          await backend.putIncrement(widget.currentProduct.id, ref).then(
             (updateCart) { 
               ref.read(cartBadgesProvider.notifier).state = updateCart.length;
               ref.read(cartProvider.notifier).state = updateCart;
             }
           )
           : 
-          await backend.putDecrement(widget.currentProduct.id, currentProductCartData(cart)['quantity']).then(
+          await backend.putDecrement(widget.currentProduct.id, currentProductCartData(cart)['quantity'], ref).then(
             (updateCart) { 
               ref.read(cartBadgesProvider.notifier).state = updateCart.length;
               ref.read(cartProvider.notifier).state = updateCart;
@@ -191,10 +189,10 @@ class _ProductsViewsState extends ConsumerState<ProductsViews> {
     );
   }
 
-  Widget toCartButton(int clientID, int quantity) {
+  Widget toCartButton(int quantity) {
     return Consumer(
       builder: (context, ref, child) {
-        bool isAutgorized = ref.watch(isAutgorizedProvider);
+        String token = ref.watch(tokenProvider);
         return ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: quantity == 0 ? Colors.grey : const Color(0xFF00B737),
@@ -205,8 +203,8 @@ class _ProductsViewsState extends ConsumerState<ProductsViews> {
           ),
           onPressed: () async {
             quantity == 0 ? null :
-            isAutgorized ? 
-            await backend.putIncrement(widget.currentProduct.id).then(
+            token.isNotEmpty ? 
+            await backend.putIncrement(widget.currentProduct.id, ref).then(
               (updateCart) { 
                 ref.read(cartBadgesProvider.notifier).state = updateCart.length;
                 ref.read(cartProvider.notifier).state = updateCart;

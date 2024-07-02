@@ -1,43 +1,45 @@
 
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 abstract class BackendRepository{
 
   Future<List> backendCategories();
 
-  Future<List> backendProducts(int categoryID);
+  Future<List> backendProducts(int categoryID, AutoDisposeFutureProviderRef ref);
 
   // Future<Image> backendPicture(String picURL);
 
   Future<String> authorization(String login, String pass);
 
-  Future<List> backendGetCart();
+  Future<List> backendGetCart(AutoDisposeFutureProviderRef ref);
 
-  Future backendPutCart(Map putData);
+  // Future backendPutCart(Map putData);
 
-  Future<List> putIncrement(int productID);
+  Future<List> putIncrement(int productID, WidgetRef ref);
 
-  Future<List> putDecrement(int productID, int cartQuantity);
+  Future<List> putDecrement(int productID, int cartQuantity, WidgetRef ref);
 
-  Future<List> putDelete(int productID);
+  Future<List> putDelete(int productID, WidgetRef ref);
 
-  Future<List> putExact(int productID, int exact);
+  Future<List> putExact(int productID, int exact, WidgetRef ref);
 
-  Future<List> backendGetRequests();
+  Future<List> backendGetRequests(AutoDisposeFutureProviderRef ref);
 
-  Future<void> newRequests(int shipID, String comment);
+  Future<void> newRequests(int shipID, String comment, WidgetRef ref);
 
-  Future<List> searchProduct(String keywords);
+  Future<List> searchProduct(String keywords, WidgetRef ref);
 
-  Future<List> searchProductByCategory(int categoryID, String keywords);
+  Future<List> searchProductByCategory(int categoryID, String keywords, WidgetRef ref);
 
-  Future<List> getRequestsID(int requestID);
+  Future<List> getRequestsID(int requestID, AutoDisposeFutureProviderRef ref);
 
-  Future<List> backendGetResponses();
+  Future<List> backendGetResponses(AutoDisposeFutureProviderRef ref);
 
-  Future<List> getClientAddress();
+  Future<List> getClientAddress(AutoDisposeFutureProviderRef ref);
 
-  Future<List> patchClientAddress(int shipID, bool isDelete, bool isDefault);
+  Future<List> patchClientAddress(int shipID, bool isDelete, bool isDefault, WidgetRef ref);
 
-  Future<List> addClientAddress(String address);
+  Future<List> addClientAddress(String address, WidgetRef ref);
 
 }

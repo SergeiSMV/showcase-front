@@ -85,8 +85,7 @@ class _CabinetState extends ConsumerState<Cabinet> {
           const SizedBox(width: 15,),
           InkWell(
             onTap: () async {
-              ref.read(isAutgorizedProvider.notifier).state = false;
-              ref.read(clientIDProvider.notifier).state = 0;
+              ref.read(tokenProvider.notifier).state = '';
               ref.read(cartBadgesProvider.notifier).state = 0;
               ref.read(cartProvider.notifier).state = [];
               await HiveImplements().saveToken('');

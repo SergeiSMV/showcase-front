@@ -34,7 +34,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
   @override
   Widget build(BuildContext context) {
 
-    final int clientID = ref.watch(clientIDProvider);
+    final String clientID = ref.watch(tokenProvider);
 
     return PopScope(
       onPopInvoked: (result){
@@ -48,7 +48,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
           child: 
           
-          clientID == 0 ? authRequired(context) :
+          clientID.isEmpty ? authRequired(context) :
           Consumer(
             builder: (context, ref, child) {
               return ref.watch(baseCartsProvider).when(

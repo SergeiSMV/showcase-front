@@ -3,6 +3,7 @@ import 'dart:async';
 
 import 'package:dotlottie_loader/dotlottie_loader.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
@@ -11,14 +12,14 @@ import '../../data/models/product_model/product_model.dart';
 import '../../data/repositories/backend_implements.dart';
 import '../products/products_views.dart';
 
-class SearchScreen extends StatefulWidget {
+class SearchScreen extends ConsumerStatefulWidget {
   const SearchScreen({super.key});
 
   @override
-  State<SearchScreen> createState() => _SearchScreenState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _SearchScreenState();
 }
 
-class _SearchScreenState extends State<SearchScreen> {
+class _SearchScreenState extends ConsumerState<SearchScreen> {
   final BackendImplements backend = BackendImplements();
   TextEditingController searchController = TextEditingController();
   Timer? _debounce;
@@ -39,7 +40,7 @@ class _SearchScreenState extends State<SearchScreen> {
         : 
         {
           setState(() { content = searchAnimation(); }),
-          await backend.searchProduct(searchController.text).then((value){
+          await backend.searchProduct(searchController.text, ref).then((value){
             value.isEmpty ? setState(() { content = Center(child: Text('товар не найден', style: black(18),),); }) : setState(() { content = products(value); }) ;
           }),
         };

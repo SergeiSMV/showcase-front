@@ -147,7 +147,7 @@ class _AdditionalInfoState extends ConsumerState<AdditionalInfo> {
                             GlobalScaffoldMessenger.instance.showSnackBar("Ошибка: Необходимо указать адрес доставки!", 'error') : 
                             {
                               progress?.showWithText('заказываем'),
-                              await backend.newRequests(shipID, commentController.text).then((_){
+                              await backend.newRequests(shipID, commentController.text, ref).then((_){
                                 progress?.dismiss();
                                 Navigator.pop(context);
                               })
@@ -175,7 +175,7 @@ class _AdditionalInfoState extends ConsumerState<AdditionalInfo> {
     return InkWell(
       onTap: () => newAddressAdd(context, newAddressController).then((_) async {
         newAddressController.text.isEmpty ? null :
-        await backend.addClientAddress(newAddressController.text).then((update){
+        await backend.addClientAddress(newAddressController.text, ref).then((update){
           ref.read(addressProvider.notifier).state = update.toList();
           newAddressController.clear();
         });

@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:dotlottie_loader/dotlottie_loader.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
@@ -12,16 +13,16 @@ import '../../data/models/product_model/product_model.dart';
 import '../../data/repositories/backend_implements.dart';
 import '../products/products_views.dart';
 
-class SearchByCategoryScreen extends StatefulWidget {
+class SearchByCategoryScreen extends ConsumerStatefulWidget {
   final String mainCategory;
   final int mainCategoryID; 
   const SearchByCategoryScreen({super.key, required this.mainCategory, required this.mainCategoryID});
 
   @override
-  State<SearchByCategoryScreen> createState() => _SearchByCategoryScreenState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _SearchByCategoryScreenState();
 }
 
-class _SearchByCategoryScreenState extends State<SearchByCategoryScreen> {
+class _SearchByCategoryScreenState extends ConsumerState<SearchByCategoryScreen> {
   final BackendImplements backend = BackendImplements();
   TextEditingController searchController = TextEditingController();
   Timer? _debounce;
@@ -42,7 +43,7 @@ class _SearchByCategoryScreenState extends State<SearchByCategoryScreen> {
         : 
         {
           setState(() { content = searchAnimation(); }),
-          await backend.searchProductByCategory(widget.mainCategoryID, searchController.text).then((value){
+          await backend.searchProductByCategory(widget.mainCategoryID, searchController.text, ref).then((value){
             value.isEmpty ? setState(() { content = Center(child: Text('товар не найден', style: black(18),),); }) : setState(() { content = products(value); }) ;
           }),
         };
