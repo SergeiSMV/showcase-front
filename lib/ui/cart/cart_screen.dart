@@ -141,7 +141,15 @@ class _CartScreenState extends ConsumerState<CartScreen> {
         children: [
           Text('итого:', style: darkProduct(18),),
           const SizedBox(width: 8,),
-          Text('${(sum / 100).toStringAsFixed(2)}₽', style: darkProduct(24, FontWeight.bold),),
+          InkWell(
+            onTap: () {
+              final Map data = {
+                "clean_cart": true,
+              };
+              BackendImplements().repeatOrder(data, ref);
+            },
+            child: Text('${(sum / 100).toStringAsFixed(2)}₽', style: darkProduct(24, FontWeight.bold),)
+          ),
         ],
       ),
     );

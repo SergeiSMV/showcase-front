@@ -465,7 +465,8 @@ class BackendImplements extends BackendRepository{
       Response response = await dio.put('$apiURL$backRepeatOrder', data: data, options: Options(headers: {'Authorization': 'Bearer $token',}));
       ref.read(cartProvider.notifier).state = response.data;
       ref.read(cartBadgesProvider.notifier).state = response.data.length;
-      GlobalScaffoldMessenger.instance.showSnackBar("Товары успешно добавлены в корзину!");
+      response.data.isEmpty ? GlobalScaffoldMessenger.instance.showSnackBar("Корзина успешно очищена!") : 
+        GlobalScaffoldMessenger.instance.showSnackBar("Товары успешно добавлены в корзину!");
     } on DioException catch (e) {
       if (e.response != null) {
         if (e.response!.statusCode == 403 || e.response!.statusCode == 401){

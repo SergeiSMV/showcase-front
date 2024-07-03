@@ -8,7 +8,6 @@ import '../../../constants/fonts.dart';
 import '../../../data/models/request_model/request_model.dart';
 import '../../../data/providers.dart';
 import '../../widgets/loading.dart';
-import '../request_deteils.dart';
 
 class RequestsView extends ConsumerStatefulWidget {
   const RequestsView({super.key});
