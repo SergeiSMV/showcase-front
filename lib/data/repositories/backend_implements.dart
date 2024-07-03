@@ -438,6 +438,24 @@ class BackendImplements extends BackendRepository{
       return [];
     }
   }
+  
+  @override
+  Future<void> register(String inn, String phone) async {
+    Map putData = {
+      "inn": inn,
+      "phone": '+7$phone'
+    };
+    try {
+      Response response = await dio.post('$apiURL$backRegister', data: putData);
+      if(response.data != null && response.data is Map){
+        GlobalScaffoldMessenger.instance.showSnackBar("Заявка успешно отправлена! Пожалуйста, ожидайте, с Вами свяжутся в самое ближайшее время");
+      } else {
+        GlobalScaffoldMessenger.instance.showSnackBar("Что-то пошло не так! Пожалуйста попробуйте снова", 'error');
+      }
+    } on DioException catch (e) {
+      GlobalScaffoldMessenger.instance.showSnackBar("Ошибка: $e", 'error');
+    }
+  }
 
 
 }

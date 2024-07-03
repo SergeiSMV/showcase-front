@@ -2,10 +2,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_progress_hud/flutter_progress_hud.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import '../../constants/fonts.dart';
 import '../../data/repositories/backend_implements.dart';
+import '../widgets/scaffold_messenger.dart';
 
 class Registration extends ConsumerStatefulWidget {
   const Registration({super.key});
@@ -59,6 +61,7 @@ class _RegistrationState extends ConsumerState<Registration> {
                       height: 45,
                       width: 300,
                       child: TextField(
+                        keyboardType: TextInputType.number,
                         controller: innController,
                         style: black(18),
                         minLines: 1,
@@ -122,9 +125,17 @@ class _RegistrationState extends ConsumerState<Registration> {
                           ),
                         ),
                         onPressed: () async { 
-                          // FocusScope.of(context).unfocus();
-                          // final progress = ProgressHUD.of(context);
-                          // progress?.showWithText('авторизуемся');
+                          if(innController.text.isEmpty || phoneController.text.isEmpty){
+                            GlobalScaffoldMessenger.instance.showSnackBar("Заполнены не все поля!", 'error');
+                          } else {
+                            FocusScope.of(context).unfocus();
+                            final progress = ProgressHUD.of(context);
+                            progress?.showWithText('отправляем');
+                            await BackendImplements().register(innController.text, phoneController.text).then((_){
+                              progress?.dismiss();
+                              GoRouter.of(context).pop();
+                            });
+                          }
                         }, 
                         child: Text('подать заявку', style: white(16),)
                       ),

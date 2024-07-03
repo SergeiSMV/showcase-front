@@ -42,4 +42,6 @@ abstract class BackendRepository{
 
   Future<List> addClientAddress(String address, WidgetRef ref);
 
+  Future<void> register(String inn, String phone);
+
 }
