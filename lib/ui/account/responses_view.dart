@@ -1,13 +1,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import '../../../constants/fonts.dart';
 import '../../../data/providers.dart';
 import '../../data/models/response_model/response_model.dart';
 import '../widgets/loading.dart';
-import 'response_deteils.dart';
 
 class ResponsesView extends ConsumerStatefulWidget {
   const ResponsesView({super.key});
@@ -74,7 +74,7 @@ class _RequestsViewState extends ConsumerState<ResponsesView> with SingleTickerP
               children: [
                 Icon(MdiIcons.packageVariantClosed, size: 20, color: Colors.white,),
                 const SizedBox(width: 5,),
-                Text('отгрузки', style: white(20, FontWeight.w400),),
+                Text('мои отгрузки', style: white(20, FontWeight.w400),),
                 const Spacer(),
                 Padding(
                   padding: const EdgeInsets.only(right: 5),
@@ -121,7 +121,13 @@ class _RequestsViewState extends ConsumerState<ResponsesView> with SingleTickerP
                 ResponseModel response = ResponseModel(response: allResponses[index]);
                 return InkWell(
                   onTap: (){
-                    responseDetail(context, response);
+                    // responseDetail(context, response);
+                    GoRouter.of(context).push(
+                      '/response_detail',
+                      extra: {
+                        'response': response,
+                      },
+                    );
                   },
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 3),

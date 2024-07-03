@@ -105,33 +105,3 @@ class _AppState extends ConsumerState<App> with WidgetsBindingObserver {
 
 
 
-/*
-class App extends ConsumerWidget {
-  const App({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-
-    isAutgorized(ref);
-
-    return MaterialApp.router(
-      scaffoldMessengerKey: GlobalScaffoldMessenger.scaffoldMessengerKey,
-      routeInformationParser: router.routeInformationParser,
-      routeInformationProvider: router.routeInformationProvider,
-      routerDelegate: router.routerDelegate,
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        textSelectionTheme: const TextSelectionThemeData(
-          cursorColor: Colors.black,
-        ),
-        splashColor: Colors.transparent,
-        highlightColor: Colors.transparent,
-        hoverColor: Colors.transparent,
-      ),
-    );
-  }
-}
-*/
-
-
-

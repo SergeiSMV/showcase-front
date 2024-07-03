@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import '../../../constants/fonts.dart';
@@ -121,7 +122,13 @@ class _RequestsViewState extends ConsumerState<RequestsView> with SingleTickerPr
                 RequestModel request = RequestModel(request: allRequests[index]);
                 return InkWell(
                   onTap: (){
-                    requestDetail(context, request);
+                    // requestDetail(context, request);
+                    GoRouter.of(context).push(
+                      '/request_detail',
+                      extra: {
+                        'request': request,
+                      },
+                    );
                   },
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 3),

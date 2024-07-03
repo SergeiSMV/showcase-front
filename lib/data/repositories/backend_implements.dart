@@ -8,6 +8,7 @@ import '../../domain/repositories/backend_repository.dart';
 import 'package:dio/dio.dart';
 
 import '../../ui/widgets/scaffold_messenger.dart';
+import '../providers.dart';
 
 
 
@@ -454,6 +455,26 @@ class BackendImplements extends BackendRepository{
       }
     } on DioException catch (e) {
       GlobalScaffoldMessenger.instance.showSnackBar("Ошибка: $e", 'error');
+    }
+  }
+  
+  @override
+  Future<void> repeatOrder(Map data, WidgetRef ref) async {
+    String token = await HiveImplements().getToken();
+    try {
+      Response response = await dio.put('$apiURL$backRepeatOrder', data: data, options: Options(headers: {'Authorization': 'Bearer $token',}));
+      ref.read(cartProvider.notifier).state = response.data;
+      ref.read(cartBadgesProvider.notifier).state = response.data.length;
+      GlobalScaffoldMessenger.instance.showSnackBar("Товары успешно добавлены в корзину!");
+    } on DioException catch (e) {
+      if (e.response != null) {
+        if (e.response!.statusCode == 403 || e.response!.statusCode == 401){
+          GlobalScaffoldMessenger.instance.showSnackBar("Необходимо повторно авторизоваться!", 'error');
+          UseCaseImplements().unloginWidgetRef(ref);
+        } else {
+          GlobalScaffoldMessenger.instance.showSnackBar("Ошибка: $e", 'error');
+        }
+      }
     }
   }
 

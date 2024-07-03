@@ -13,3 +13,4 @@ const String getBackSearchProduct = '/products/search';
 const String getBackSearchByCategory = '/search';
 const String backClientAddress = '/client/address';
 const String backRegister = '/register';
+const String backRepeatOrder = '/repeat';

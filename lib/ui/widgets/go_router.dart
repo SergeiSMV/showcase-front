@@ -2,7 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../data/models/request_model/request_model.dart';
+import '../../data/models/response_model/response_model.dart';
 import '../account/account_screen.dart';
+import '../account/request_deteils.dart';
+import '../account/response_deteils.dart';
 import '../account/ships_view.dart';
 import '../auth/auth.dart';
 import '../cart/additional_info.dart';
@@ -86,6 +90,24 @@ final GoRouter router = GoRouter(
           path: '/account',
           builder: (context, state) => const AccountScreen(),
           pageBuilder: (context, state) => const NoTransitionPage<void>(child: AccountScreen()),
+        ),
+        GoRoute(
+          path: '/request_detail',
+          builder: (context, state) => const SearchScreen(),
+          pageBuilder: (context, state) {
+            final extra = state.extra as Map<String, dynamic>;
+            final request = extra['request'] as RequestModel;
+            return NoTransitionPage<void>(child: RequestDetail(request: request));
+          }
+        ),
+        GoRoute(
+          path: '/response_detail',
+          builder: (context, state) => const SearchScreen(),
+          pageBuilder: (context, state) {
+            final extra = state.extra as Map<String, dynamic>;
+            final response = extra['response'] as ResponseModel;
+            return NoTransitionPage<void>(child: ResponseDetail(response: response,));
+          }
         ),
         GoRoute(
           path: '/search',

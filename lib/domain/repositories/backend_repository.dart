@@ -44,4 +44,6 @@ abstract class BackendRepository{
 
   Future<void> register(String inn, String phone);
 
+  Future<void> repeatOrder(Map data, WidgetRef ref);
+
 }
