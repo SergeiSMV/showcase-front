@@ -44,55 +44,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         lastIndex == currenIndex ? null : ref.read(bottomNavIndexProvider.notifier).state = lastIndex : null;
       },
       child: Center(
-        child: Text('Home Screen', style: darkCategory(18),)
-        
-        
+        child: Text('Home Screen', style: black(18),)
         /*
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Consumer(
-              builder: (context, ref, child) {
-                String server = ref.watch(serverURLProvider);
-                return Text('сервер: $server', style: black(18),);
-              }
+        InkWell(
+          onTap: (){
+            ref.read(bottomNavVisibleProvider.notifier).state = false;
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Storis()));
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            decoration: BoxDecoration(
+              color: Colors.green,
+              borderRadius: BorderRadius.circular(5),
             ),
-            const SizedBox(height: 20,),
-            SizedBox(
-              width: 250,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF00B737),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                onPressed: () => changeServer(context, controller).then((_) async {
-                  await hive.saveServerURL(controller.text).then((value) => ref.read(serverURLProvider.notifier).state = controller.text.toString());
-                }), 
-                child: Text('изменить сервер', style: white(16),)
-              ),
-            ),
-            const SizedBox(height: 10,),
-            SizedBox(
-              width: 250,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.amber,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                onPressed: () async {
-                  await hive.saveServerURL(apiURL).then((_) => ref.read(serverURLProvider.notifier).state = apiURL.toString());
-                }, 
-                child: Text('по умолчанию', style: black(16),)
-              ),
-            )
-          ],
-        ),
+            child: Text('promo storis', style: white(18),)
+          )
+        )
         */
       ),
     );

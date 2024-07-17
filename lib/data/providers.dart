@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'repositories/backend_implements.dart';
 
+
 // состояние индексов bottomNavigationBar
+final bottomNavVisibleProvider = StateProvider<bool>((ref) => true);
 final bottomNavIndexProvider = StateProvider<int>((ref) => 0);
 final lastIndexProvider = StateProvider<int>((ref) => 0);
 

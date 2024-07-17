@@ -281,9 +281,10 @@ class BackendImplements extends BackendRepository{
 
   @override
   Future<List> searchProduct(String keywords, WidgetRef ref) async {
-    String token = await HiveImplements().getToken();
+    // String token = await HiveImplements().getToken();
     try {
-      Response result = await dio.get('$apiURL$getBackSearchProduct/$keywords', options: Options(headers: {'Authorization': 'Bearer $token',}));
+      // Response result = await dio.get('$apiURL$getBackSearchProduct/$keywords', options: Options(headers: {'Authorization': 'Bearer $token',}));
+      Response result = await dio.get('$apiURL$getBackSearchProduct/$keywords');
       return List.from(result.data);
     } on DioException catch (e) {
       if (e.response != null) {
@@ -298,9 +299,10 @@ class BackendImplements extends BackendRepository{
 
   @override
   Future<List> searchProductByCategory(int categoryID, String keywords, WidgetRef ref) async {
-    String token = await HiveImplements().getToken();
+    // String token = await HiveImplements().getToken();
     try {
-      Response result = await dio.get('$apiURL$getBackSearchByCategory/$categoryID/$keywords', options: Options(headers: {'Authorization': 'Bearer $token',}));
+      // Response result = await dio.get('$apiURL$getBackSearchByCategory/$categoryID/$keywords', options: Options(headers: {'Authorization': 'Bearer $token',}));
+      Response result = await dio.get('$apiURL$getBackSearchByCategory/$categoryID/$keywords');
       return List.from(result.data);
     } on DioException catch (e) {
       if (e.response != null) {

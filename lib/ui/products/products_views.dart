@@ -92,7 +92,6 @@ class _ProductsViewsState extends ConsumerState<ProductsViews> {
           ),
           child: Builder(
             builder: (context) {
-
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -111,44 +110,48 @@ class _ProductsViewsState extends ConsumerState<ProductsViews> {
                   ),
                   Expanded(child: Align(alignment: Alignment.centerLeft, child: getPrice(widget.currentProduct.basePrice, widget.currentProduct.clientPrice,))),
                   const SizedBox(height: 10,),
-                  Consumer(
-                    builder: (context, ref, child) {
-                      final cart = ref.watch(cartProvider);
-                      return SizedBox(
-                        width: double.infinity,
-                        child: 
-                        currentProductsInCart(cart) ? 
-                        Row(
-                          children: [
-                            quantityControlButton('minus', cart),
-                            Expanded(
-                              child: InkWell(
-                                onTap: () => indicateQuantity(context, _quantityController, widget.currentProduct.name).then((_) async {
-                                  await backend.putExact(widget.currentProduct.id, int.parse(_quantityController.text), ref).then(
-                                    (updateCart) { 
-                                      ref.read(cartBadgesProvider.notifier).state = updateCart.length;
-                                      ref.read(cartProvider.notifier).state = updateCart;
-                                    }
-                                  );
-                                }),
-                                child: Center(
-                                  child: Text('${currentProductCartData(cart)['quantity']}', style: darkProduct(20, FontWeight.w500),)
-                                ),
-                              )
-                            ),
-                            quantityControlButton('plus')
-                          ],
-                        )
-                        : toCartButton(widget.currentProduct.quantity),
-                      );
-                    }
-                  ),
+                  cartController(),
                 ],
               );
             }
           ),
         ),
       ),
+    );
+  }
+
+  Consumer cartController() {
+    return Consumer(
+      builder: (context, ref, child) {
+        final cart = ref.watch(cartProvider);
+        return SizedBox(
+          width: double.infinity,
+          child: 
+          currentProductsInCart(cart) ? 
+          Row(
+            children: [
+              quantityControlButton('minus', cart),
+              Expanded(
+                child: InkWell(
+                  onTap: () => indicateQuantity(context, _quantityController, widget.currentProduct.name).then((_) async {
+                    await backend.putExact(widget.currentProduct.id, int.parse(_quantityController.text), ref).then(
+                      (updateCart) { 
+                        ref.read(cartBadgesProvider.notifier).state = updateCart.length;
+                        ref.read(cartProvider.notifier).state = updateCart;
+                      }
+                    );
+                  }),
+                  child: Center(
+                    child: Text('${currentProductCartData(cart)['quantity']}', style: darkProduct(20, FontWeight.w500),)
+                  ),
+                )
+              ),
+              quantityControlButton('plus')
+            ],
+          )
+          : toCartButton(widget.currentProduct.quantity),
+        );
+      }
     );
   }
 
@@ -281,6 +284,7 @@ class _ProductsViewsState extends ConsumerState<ProductsViews> {
       builder: (context) {
         return ProductCard(
           product: widget.currentProduct,
+          cartController: cartController(),
         );
       },
     );

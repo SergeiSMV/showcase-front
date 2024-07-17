@@ -185,10 +185,46 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                           ),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 5, top: 10),
-                        child: Text(category.name, style: darkCategory(18, FontWeight.w500),),
+                      /*
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.only(left: 10, right: 5, top: 5, bottom: 15),
+                            width: MediaQuery.of(context).size.width,
+                            decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+                              // color: Colors.white60,
+                              gradient: LinearGradient(
+                                colors: [Colors.black, Colors.transparent], // Градиент от красного к зеленому
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                              ),
+                            ),
+                            child: Text(category.name, style: white(18, FontWeight.w500)),
+                          ),
+                          // const Expanded(child: SizedBox()),
+                        ],
                       ),
+                      */
+                      Container(
+                            padding: const EdgeInsets.only(left: 10, right: 5, top: 5, bottom: 15),
+                            width: MediaQuery.of(context).size.width,
+                            decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+                              // color: Colors.white60,
+                              gradient: LinearGradient(
+                                colors: [Colors.black54, Colors.transparent, ], // Градиент от красного к зеленому
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                              ),
+                            ),
+                            child: Text(category.name, style: white(18, FontWeight.w500)),
+                          ),
+                      // Padding(
+                      //   padding: const EdgeInsets.only(left: 5, top: 10),
+                      //   child: Text(category.name, style: darkCategory(18, FontWeight.w500),),
+                      // ),
                     ],
                   ),
                 ),

@@ -19,7 +19,7 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
   @override
   Widget build(BuildContext context) {
 
-    final String clientID = ref.watch(tokenProvider);
+    final String token = ref.watch(tokenProvider);
 
     return PopScope(
       onPopInvoked: (result){
@@ -29,7 +29,7 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
         lastIndex == currenIndex ? null : ref.read(bottomNavIndexProvider.notifier).state = lastIndex : null;
       },
       child: SafeArea(
-        child: clientID.isEmpty ? authRequired(context) : const Cabinet()
+        child: token.isEmpty ? authRequired(context) : const Cabinet()
       ),
     );
   }

@@ -18,7 +18,7 @@ import '../home/home_screen.dart';
 import '../registration/registration.dart';
 import '../search/search_by_category_screen.dart';
 import '../search/serch_screen.dart';
-import 'bottom_nav_bar.dart';
+import 'shell_route_scaffold.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<NavigatorState> _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -30,10 +30,13 @@ final GoRouter router = GoRouter(
     ShellRoute(
       navigatorKey: _shellNavigatorKey,
       builder: (context, state, child) {        
-        return Scaffold(
+        return ShellRouteScaffold(child: child);
+        /*
+        Scaffold(
           body: child,
           bottomNavigationBar: const BottomNavBar(),
         );
+        */
       },
       routes: [
         GoRoute(

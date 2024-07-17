@@ -1,6 +1,7 @@
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:showcase_front/constants/fonts.dart';
 import 'package:showcase_front/constants/server_config.dart';
@@ -14,7 +15,8 @@ import '../../data/models/category_model/category_data.dart';
 
 class ProductCard extends StatefulWidget {
   final ProductModel product;
-  const ProductCard({super.key, required this.product});
+  final Consumer cartController;
+  const ProductCard({super.key, required this.product, required this.cartController});
 
   @override
   State<ProductCard> createState() => _ProductCardState();
@@ -47,6 +49,7 @@ class _ProductCardState extends State<ProductCard> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
+              padding: const EdgeInsets.symmetric(vertical: 10),
               width: double.infinity,
               height: 250,
               decoration: const BoxDecoration(
@@ -107,6 +110,8 @@ class _ProductCardState extends State<ProductCard> {
               ],
             ),
             Align(alignment: Alignment.centerLeft, child: getPrice(widget.product.basePrice, widget.product.clientPrice,)),
+            const SizedBox(height: 10,),
+            widget.cartController,
             const SizedBox(height: 10,),
           ],
         ),
