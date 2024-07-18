@@ -6,6 +6,7 @@ import 'package:showcase_front/constants/fonts.dart';
 import 'package:showcase_front/data/repositories/hive_implements.dart';
 
 import '../../data/providers.dart';
+import '../rustore/rusrore.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -26,6 +27,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.dark,
     ));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Rustore().rustoreInfo(context);
+    });
+    
   }
 
   @override
